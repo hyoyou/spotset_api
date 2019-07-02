@@ -8,6 +8,7 @@ namespace SpotSet.Api.Tests
         [Fact]
         public void Test1()
         {
+            Assert.Equal(4, Decimal.Add(2, 2));
         }
     }
 }
