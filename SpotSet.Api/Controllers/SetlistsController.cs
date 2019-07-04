@@ -5,11 +5,12 @@ using SpotSet.Api.Services;
 namespace SpotSet.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class SetlistController : Controller
+    [ApiController]
+    public class SetlistsController : Controller
     {
         private readonly ISetlistService _setlistService;
 
-        public SetlistController(ISetlistService setlistService)
+        public SetlistsController(ISetlistService setlistService)
         { 
             _setlistService = setlistService;
         }

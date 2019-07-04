@@ -7,14 +7,14 @@ using Xunit;
 
 namespace SpotSet.Api.Tests.Controllers
 {
-    public class SetlistControllerTest
+    public class SetlistsControllerTest
     {
         [Fact]
         public async Task GivenSetlistServiceReturnsASuccessResult_WhenCallingGetSetlist_ThenItReturnsAStatus200()
         {
             MockHttpClientFactory mockHttpClientFactory = new MockHttpClientFactory();
             var mockSetlistService = new MockSetlistService(mockHttpClientFactory);
-            var controller = new SetlistController(mockSetlistService);
+            var controller = new SetlistsController(mockSetlistService);
             var result = await controller.GetSetlist("setlistId");
 
             Assert.IsType<OkObjectResult>(result);
@@ -25,7 +25,7 @@ namespace SpotSet.Api.Tests.Controllers
         {
             MockHttpClientFactory mockHttpClientFactory = new MockHttpClientFactory();
             var mockSetlistService = new MockSetlistService(mockHttpClientFactory);
-            var result = await mockSetlistService.GetSetlist("53d6f3ad");
+            var result = await mockSetlistService.GetSetlist("setlistId");
          
             Assert.IsType<Setlist>(result);
         }
