@@ -10,6 +10,7 @@ using Moq.Protected;
 using Newtonsoft.Json;
 using SpotSet.Api.Controllers;
 using SpotSet.Api.Models;
+using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Mocks;
 using Xunit;
 
@@ -58,9 +59,10 @@ namespace SpotSet.Api.Tests.Controllers
             var serializedSetlist = SerializeSetlist(newSetlist);
             var mockHttpMessageHandler = CreateMockHttpMessageHandler(serializedSetlist);
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
-            var mockSetlistService = new MockSetlistService(mockHttpClient);
+            var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
+            var setlistService = new SetlistService(mockHttpClientFactory);
             
-            return new SetlistsController(mockSetlistService);
+            return new SetlistsController(setlistService);
         }
 
         [Fact]
@@ -95,13 +97,13 @@ namespace SpotSet.Api.Tests.Controllers
             var result = await controller.GetSetlist(newSetlist.id);
             
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<Setlist>(okResult.Value);
-            Assert.IsType<Setlist>(model);
-            Assert.Equal(newSetlist.id, model.id);
-            Assert.Equal(newSetlist.eventDate, model.eventDate);
-            Assert.Equal(newSetlist.artist.name, model.artist.name);
-            Assert.Equal(newSetlist.venue.name, model.venue.name);
-            Assert.Equal(newSetlist.sets.set, model.sets.set);
+            var setlistModel = Assert.IsAssignableFrom<Setlist>(okResult.Value);
+            Assert.IsType<Setlist>(setlistModel);
+            Assert.Equal(newSetlist.id, setlistModel.id);
+            Assert.Equal(newSetlist.eventDate, setlistModel.eventDate);
+            Assert.Equal(newSetlist.artist.name, setlistModel.artist.name);
+            Assert.Equal(newSetlist.venue.name, setlistModel.venue.name);
+            Assert.Equal(newSetlist.sets.set, setlistModel.sets.set);
         }
         
         [Fact]
@@ -119,13 +121,13 @@ namespace SpotSet.Api.Tests.Controllers
             var result = await controller.GetSetlist(newSetlist.id);
             
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<Setlist>(okResult.Value);
-            Assert.IsType<Setlist>(model);
-            Assert.Equal(newSetlist.id, model.id);
-            Assert.Equal(newSetlist.eventDate, model.eventDate);
-            Assert.Equal(newSetlist.artist.name, model.artist.name);
-            Assert.Equal(newSetlist.venue.name, model.venue.name);
-            Assert.Equal(newSetlist.sets.set, model.sets.set);
+            var setlistModel = Assert.IsAssignableFrom<Setlist>(okResult.Value);
+            Assert.IsType<Setlist>(setlistModel);
+            Assert.Equal(newSetlist.id, setlistModel.id);
+            Assert.Equal(newSetlist.eventDate, setlistModel.eventDate);
+            Assert.Equal(newSetlist.artist.name, setlistModel.artist.name);
+            Assert.Equal(newSetlist.venue.name, setlistModel.venue.name);
+            Assert.Equal(newSetlist.sets.set, setlistModel.sets.set);
         }
     }
 }
