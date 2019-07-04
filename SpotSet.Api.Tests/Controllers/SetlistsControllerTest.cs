@@ -17,25 +17,25 @@ namespace SpotSet.Api.Tests.Controllers
 {
     public class SetlistsControllerTest
     {
-        private SetlistsController _controller;
-        private Setlist _expectedSetlist;
-        public SetlistsControllerTest()
+        private Setlist CreateSetlist(string id, string eventDate, Artist artistData, Venue venueData, Sets setsData)
         {
-            var artistData = new Artist { name = "Artist" };
-            var venueData = new Venue { name = "Venue" };
-            var setsData = new Sets { set = new List<Set>() };
-
-            _expectedSetlist = new Setlist
+            return new Setlist
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
+                id = id,
+                eventDate = eventDate,
                 artist = artistData,
                 venue = venueData,
                 sets = setsData
             };
-            
-            var serializedSetlist = JsonConvert.SerializeObject(_expectedSetlist);
-            
+        }
+        
+        private string SerializeSetlist(Setlist newSetlist)
+        {
+            return JsonConvert.SerializeObject(newSetlist);
+        }
+        
+        private static Mock<HttpMessageHandler> CreateMockHttpMessageHandler(string serializedSetlist)
+        {
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             mockHttpMessageHandler
                 .Protected()
@@ -50,34 +50,82 @@ namespace SpotSet.Api.Tests.Controllers
                     Content = new StringContent(serializedSetlist, Encoding.UTF8, "application/json")
                 })
                 .Verifiable();
-            
-            var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
-            MockSetlistService mockSetlistService = new MockSetlistService(mockHttpClient);
-            
-            _controller = new SetlistsController(mockSetlistService);
+            return mockHttpMessageHandler;
         }
         
+        private SetlistsController CreateController(Setlist newSetlist)
+        {
+            var serializedSetlist = SerializeSetlist(newSetlist);
+            var mockHttpMessageHandler = CreateMockHttpMessageHandler(serializedSetlist);
+            var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var mockSetlistService = new MockSetlistService(mockHttpClient);
+            
+            return new SetlistsController(mockSetlistService);
+        }
+
         [Fact]
         public async void GivenSetlistServiceReturnsASuccessResult_WhenCallingGetSetlist_ThenItReturnsAStatus200()
         {
-            var result = await _controller.GetSetlist(_expectedSetlist.id);
+            var id = "setlistId";
+            var eventDate = "01-07-2019";
+            var artistData = new Artist { name = "Artist" };
+            var venueData = new Venue { name = "Venue" };
+            var setsData = new Sets { set = new List<Set>() };
+            
+            var newSetlist = CreateSetlist(id, eventDate, artistData, venueData, setsData);
+            var controller = CreateController(newSetlist);
+            
+            var result = await controller.GetSetlist(newSetlist.id);
             
             Assert.IsType<OkObjectResult>(result);
         }
-        
+
         [Fact]
         public async void GivenSetlistServiceReturnsASuccessResult_WhenCallingGetSetlist_ThenItReturnsASetlistModel()
         {
-            var result = await _controller.GetSetlist(_expectedSetlist.id);
+            var id = "setlistId";
+            var eventDate = "01-07-2019";
+            var artistData = new Artist { name = "Artist" };
+            var venueData = new Venue { name = "Venue" };
+            var setsData = new Sets { set = new List<Set>() };
+            
+            var newSetlist = CreateSetlist(id, eventDate, artistData, venueData, setsData);
+            var controller = CreateController(newSetlist);
+            
+            var result = await controller.GetSetlist(newSetlist.id);
             
             var okResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom<Setlist>(okResult.Value);
             Assert.IsType<Setlist>(model);
-            Assert.Equal(_expectedSetlist.id, model.id);
-            Assert.Equal(_expectedSetlist.eventDate, model.eventDate);
-            Assert.Equal(_expectedSetlist.artist.name, model.artist.name);
-            Assert.Equal(_expectedSetlist.venue.name, model.venue.name);
-            Assert.Equal(_expectedSetlist.sets.set, model.sets.set);
+            Assert.Equal(newSetlist.id, model.id);
+            Assert.Equal(newSetlist.eventDate, model.eventDate);
+            Assert.Equal(newSetlist.artist.name, model.artist.name);
+            Assert.Equal(newSetlist.venue.name, model.venue.name);
+            Assert.Equal(newSetlist.sets.set, model.sets.set);
+        }
+        
+        [Fact]
+        public async void GivenSetlistServiceReturnsAResultWithMissingData_WhenCallingGetSetlist_ThenItReturnsASetlistModel()
+        {
+            var id = "setlistId";
+            var eventDate = "02-07-2019";
+            var artistData = new Artist { name = "Artist" };
+            var venueData = new Venue { name = "" };
+            var setsData = new Sets { set = new List<Set>() };
+            
+            var newSetlist = CreateSetlist(id, eventDate, artistData, venueData, setsData);
+            var controller = CreateController(newSetlist);
+            
+            var result = await controller.GetSetlist(newSetlist.id);
+            
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<Setlist>(okResult.Value);
+            Assert.IsType<Setlist>(model);
+            Assert.Equal(newSetlist.id, model.id);
+            Assert.Equal(newSetlist.eventDate, model.eventDate);
+            Assert.Equal(newSetlist.artist.name, model.artist.name);
+            Assert.Equal(newSetlist.venue.name, model.venue.name);
+            Assert.Equal(newSetlist.sets.set, model.sets.set);
         }
     }
 }
