@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Moq;
+using Newtonsoft.Json;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
 
@@ -8,23 +10,21 @@ namespace SpotSet.Api.Tests.Mocks
 {
     public class MockSetlistService : ISetlistService
     {
-        private static IHttpClientFactory _httpFactory;
+        private HttpClient _httpClient;
 
-        public MockSetlistService(IHttpClientFactory httpFactory)
+        public MockSetlistService(HttpClient httpClient)
         {
-            _httpFactory = httpFactory;
+            _httpClient = httpClient;
         }
 
         public async Task<Setlist> GetSetlist(string setlistId)
         {
-            var httpClient = _httpFactory.CreateClient();
-               
-            HttpResponseMessage response = await httpClient.GetAsync("http://test.com");
+            HttpResponseMessage response = await _httpClient.GetAsync("http://test.com");
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                await response.Content.ReadAsStringAsync();
-                return new Setlist();
+                var result = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<Setlist>(result);
             }
 
             return null;

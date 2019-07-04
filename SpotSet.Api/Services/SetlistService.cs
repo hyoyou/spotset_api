@@ -17,11 +17,14 @@ namespace SpotSet.Api.Services
 
         public async Task<Setlist> GetSetlist(string setlistId)
         {
+            // TODO
             var url = $"https://api.setlist.fm/rest/1.0/setlist/{setlistId}";
 
             {
                 var httpClient = _httpFactory.CreateClient();
+                // TODO
                 httpClient.DefaultRequestHeaders.Add("x-api-key", "dijireBcABogLtlblNC9u8lEYo0MDsSu8blF");
+                // TODO
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
                 HttpResponseMessage response = await httpClient.GetAsync(url);
