@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -18,8 +19,13 @@ namespace SpotSet.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddHttpClient("GetSetlistClient", client =>
+            {
+                client.BaseAddress = new Uri("https://api.setlist.fm/rest/1.0/setlist/");
+                client.DefaultRequestHeaders.Add("x-api-key", "dijireBcABogLtlblNC9u8lEYo0MDsSu8blF");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
             services.AddSingleton<ISetlistService, SetlistService>();
         }
  
