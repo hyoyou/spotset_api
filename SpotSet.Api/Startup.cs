@@ -14,6 +14,8 @@ namespace SpotSet.Api
         {
             Configuration = configuration;
         }
+        
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         public IConfiguration Configuration { get; }
 
@@ -27,6 +29,14 @@ namespace SpotSet.Api
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             services.AddSingleton<ISetlistService, SetlistService>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000");
+                    });
+            });
         }
  
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -39,7 +49,8 @@ namespace SpotSet.Api
             {
                 app.UseHsts();
             }
-
+            
+            app.UseCors(MyAllowSpecificOrigins); 
             app.UseHttpsRedirection();
             app.UseMvc();
         }
