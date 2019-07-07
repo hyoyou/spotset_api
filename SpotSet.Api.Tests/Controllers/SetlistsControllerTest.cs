@@ -23,8 +23,8 @@ namespace SpotSet.Api.Tests.Controllers
             var venueData = new Venue { name = null };
             var setsData = new Sets { set = null };
             
-            var newSetlist = MockSetup.CreateSetlist(id, eventDate, artistData, venueData, setsData);
-            var service = MockSetup.CreateSuccessSetlistServiceWithMocks(newSetlist);
+            var newSetlist = TestSetup.CreateSetlist(id, eventDate, artistData, venueData, setsData);
+            var service = TestSetup.CreateSuccessSetlistServiceWithMocks(newSetlist);
             var controller = CreateController(service);
             
             var result = await controller.GetSetlist(newSetlist.id);
@@ -35,7 +35,7 @@ namespace SpotSet.Api.Tests.Controllers
         [Fact]
         public async void GivenSetlistServiceReturnsAnErrorResult_WhenCallingGetSetlist_ThenItReturnsAStatus404()
         {
-            var service = MockSetup.CreateErrorSetlistServiceWithMocks();
+            var service = TestSetup.CreateErrorSetlistServiceWithMocks();
             var controller = CreateController(service);
             
             var result = await controller.GetSetlist("invalidId");

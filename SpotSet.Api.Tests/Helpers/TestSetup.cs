@@ -11,7 +11,7 @@ using SpotSet.Api.Services;
 
 namespace SpotSet.Api.Tests.Mocks
 {
-    public static class MockSetup
+    public static class TestSetup
     {
         public static Setlist CreateSetlist(string id, string eventDate, Artist artistData, Venue venueData, Sets setsData)
         {
