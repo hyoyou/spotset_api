@@ -1,13 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
+        <UserSecretsId>6b2723de-7f8f-4f77-9062-e1eb48bca310</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     </ItemGroup>
 
 </Project>
