@@ -4,29 +4,45 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SpotSet.Api.Constants;
 using SpotSet.Api.Services;
 
 namespace SpotSet.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-        
+        private string _setlistApiKey;
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json",
+                    optional: false,
+                    reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.Build();
+        }
 
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            _setlistApiKey = Configuration["SetlistApiKey"];
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddHttpClient("GetSetlistClient", client =>
+            services.AddHttpClient(HttpConstants.SetlistClient, client =>
             {
-                client.BaseAddress = new Uri("https://api.setlist.fm/rest/1.0/setlist/");
-                client.DefaultRequestHeaders.Add("x-api-key", "dijireBcABogLtlblNC9u8lEYo0MDsSu8blF");
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.BaseAddress = new Uri(HttpConstants.SetlistUri);
+                client.DefaultRequestHeaders.Add(HttpConstants.XApiKey, _setlistApiKey);
+                client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
             });
             services.AddSingleton<ISetlistService, SetlistService>();
             services.AddCors(options =>
@@ -34,11 +50,11 @@ namespace SpotSet.Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000");
+                        builder.WithOrigins(HttpConstants.ClientUrlLocal);
                     });
             });
         }
- 
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -49,8 +65,8 @@ namespace SpotSet.Api
             {
                 app.UseHsts();
             }
-            
-            app.UseCors(MyAllowSpecificOrigins); 
+
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseHttpsRedirection();
             app.UseMvc();
         }
