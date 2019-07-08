@@ -48,5 +48,15 @@ namespace SpotSet.Api.Tests.Helpers
             
             return new SetlistService(mockHttpClientFactory);
         }
+
+        public static SpotifyService CreateSpotifyServiceWithMocks(HttpStatusCode statusCode, SpotifyAccessToken accessToken)
+        {
+            var serializedSetlist = SerializeObject(accessToken);
+            var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
+            var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
+            
+            return new SpotifyService(mockHttpClientFactory, "apikey", "apisecret");
+        }
     }
 }

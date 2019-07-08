@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SpotSet.Api.Constants;
+using SpotSet.Api.Handlers;
 using SpotSet.Api.Services;
 
 namespace SpotSet.Api
@@ -18,9 +19,7 @@ namespace SpotSet.Api
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json",
-                    optional: false,
-                    reloadOnChange: true)
+                .AddJsonFile("appsettings.json", false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             if (env.IsDevelopment())
@@ -31,12 +30,13 @@ namespace SpotSet.Api
             Configuration = builder.Build();
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             _setlistApiKey = Configuration["SetlistApiKey"];
-
+            
+            services.AddTransient<AppAuthorizationHandler>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHttpClient(HttpConstants.SetlistClient, client =>
             {
@@ -44,6 +44,12 @@ namespace SpotSet.Api
                 client.DefaultRequestHeaders.Add(HttpConstants.XApiKey, _setlistApiKey);
                 client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
             });
+            services.AddHttpClient(HttpConstants.SpotifyClient, client =>
+                {
+                    client.BaseAddress = new Uri(HttpConstants.SpotifyUri);
+                    client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
+                })
+                .AddHttpMessageHandler<AppAuthorizationHandler>();
             services.AddSingleton<ISetlistService, SetlistService>();
             services.AddCors(options =>
             {
