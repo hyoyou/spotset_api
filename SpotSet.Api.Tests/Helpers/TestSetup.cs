@@ -39,9 +39,9 @@ namespace SpotSet.Api.Tests.Helpers
             return mockHttpMessageHandler;
         }
         
-        public static SetlistService CreateSetlistServiceWithMocks(HttpStatusCode statusCode, Setlist newSetlist = null)
+        public static SetlistService CreateSetlistServiceWithMocks(HttpStatusCode statusCode, object content = null)
         {
-            var serializedSetlist = SerializeObject(newSetlist);
+            var serializedSetlist = SerializeObject(content);
             var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
             var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
