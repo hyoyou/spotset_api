@@ -24,7 +24,7 @@ namespace SpotSet.Api.Services
         {
             var setlistModel = await SetlistRequest(setlistId);
             if (setlistModel == null) return null;
-            
+            // TODO: raise specific error
             var spotifyModel = await SpotifyRequest(setlistModel);
             var tracksDto = MapSongToTrackUri(setlistModel.sets.set, spotifyModel.SpotifyTracks);
             var setlistDto = new SetlistDto
@@ -49,7 +49,7 @@ namespace SpotSet.Api.Services
             {
                 return await DeserializeSetlist(response);
             }
-
+            //TODO: return exception
             return null;
         }
         
@@ -116,9 +116,9 @@ namespace SpotSet.Api.Services
             foreach (var track in spotifyModel)
             {
                 var items = track.Tracks?.Items;
-                if (items == null || !items.Exists(item => item.Name.Contains(name))) continue;
+                if (items == null || !items.Exists(item => item.Name.ToLower().Contains(name.ToLower()))) continue;
                 {
-                    var trackMatch = items.First(item => item.Name.Contains(name));
+                    var trackMatch = items.First(item => item.Name.ToLower().Contains(name.ToLower()));
                     return trackMatch?.Uri;
                 }
             }
