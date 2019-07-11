@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Net;
-using Moq;
 using SpotSet.Api.Models;
-using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
 using Xunit;
 

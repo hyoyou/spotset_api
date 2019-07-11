@@ -1,8 +1,10 @@
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -51,12 +53,13 @@ namespace SpotSet.Api.Tests.Helpers
 
         public static SpotifyService CreateSpotifyServiceWithMocks(HttpStatusCode statusCode, SpotifyAccessToken accessToken)
         {
-            var serializedSetlist = SerializeObject(accessToken);
-            var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
+            var serializedToken = SerializeObject(accessToken);
+            var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedToken);
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
             var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
+            var mockConfiguration = new MockConfiguration();
             
-            return new SpotifyService(mockHttpClientFactory, "apikey", "apisecret");
+            return new SpotifyService(mockHttpClientFactory, mockConfiguration);
         }
     }
 }
