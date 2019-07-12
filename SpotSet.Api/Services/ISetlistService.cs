@@ -7,6 +7,6 @@ namespace SpotSet.Api.Services
     {
         Task<SpotSetDto> GetSetlist(string setlistId);
         Task<SetlistDto> SetlistRequest(string setlistId);
-        Task<SpotifyTracksDto> SpotifyRequest(SetlistDto setlistmodel);
+        Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistmodel);
     }
 }

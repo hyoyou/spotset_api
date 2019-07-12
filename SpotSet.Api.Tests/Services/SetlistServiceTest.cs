@@ -106,7 +106,7 @@ namespace SpotSet.Api.Tests.Services
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var result = await successSetlistService.SpotifyRequest(newSetlist);
 
-            Assert.IsType<SpotifyTracksDto>(result);
+            Assert.IsType<SpotifyTracksModel>(result);
         }
 
         [Fact]

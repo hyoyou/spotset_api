@@ -59,11 +59,11 @@ namespace SpotSet.Api.Services
             return JsonConvert.DeserializeObject<SetlistDto>(setlist);
         }
         
-        public async Task<SpotifyTracksDto> SpotifyRequest(SetlistDto setlistmodel)
+        public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistmodel)
         {
             var spotifyHttpClient = _httpFactory.CreateClient(HttpConstants.SpotifyClient);
             var artist = setlistmodel?.Artist?.Name;
-            var spotifyTracks = new SpotifyTracksDto();
+            var spotifyTracks = new SpotifyTracksModel();
             
             foreach (var set in setlistmodel?.Sets?.Set)
             {
