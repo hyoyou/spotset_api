@@ -13,22 +13,22 @@ namespace SpotSet.Api.Tests.Services
         {
             var newSetlist = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = new Artist { name = "Artist" },
-                venue = new Venue { name = "Venue" },
-                sets = new Sets { set = new List<Set>() }
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Sets = new Sets { Set = new List<Set>() }
             };
             
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             
-            var result = await successSetlistService.SetlistRequest(newSetlist.id);
+            var result = await successSetlistService.SetlistRequest(newSetlist.Id);
     
             Assert.IsType<SetlistDto>(result);
-            Assert.Equal(newSetlist.id, result.id);
-            Assert.Equal(newSetlist.eventDate, result.eventDate);
-            Assert.Equal(newSetlist.artist.name, result.artist.name);
-            Assert.Equal(newSetlist.venue.name, result.venue.name);
+            Assert.Equal(newSetlist.Id, result.Id);
+            Assert.Equal(newSetlist.EventDate, result.EventDate);
+            Assert.Equal(newSetlist.Artist.Name, result.Artist.Name);
+            Assert.Equal(newSetlist.Venue.Name, result.Venue.Name);
         }
         
         [Fact]
@@ -36,23 +36,23 @@ namespace SpotSet.Api.Tests.Services
         {
             var newSetlistWithMissingData = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = null,
-                venue = null,
-                sets = new Sets { set = new List<Set>() }
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = null,
+                Venue = null,
+                Sets = new Sets { Set = new List<Set>() }
             };
             
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlistWithMissingData);
             
-            var result = await successSetlistService.SetlistRequest(newSetlistWithMissingData.id);
+            var result = await successSetlistService.SetlistRequest(newSetlistWithMissingData.Id);
     
             Assert.IsType<SetlistDto>(result);
-            Assert.Equal(newSetlistWithMissingData.id, result.id);
-            Assert.Equal(newSetlistWithMissingData.eventDate, result.eventDate);
-            Assert.Null(result.artist);
-            Assert.Null(result.venue);
-            Assert.Equal(newSetlistWithMissingData.sets.set, result.sets.set);
+            Assert.Equal(newSetlistWithMissingData.Id, result.Id);
+            Assert.Equal(newSetlistWithMissingData.EventDate, result.EventDate);
+            Assert.Null(result.Artist);
+            Assert.Null(result.Venue);
+            Assert.Equal(newSetlistWithMissingData.Sets.Set, result.Sets.Set);
         }
 
         [Fact]
@@ -70,17 +70,17 @@ namespace SpotSet.Api.Tests.Services
         {
             var song1 = new Song
             {
-                name = "Song Title"
+                Name = "Song Title"
             };
             
             var song2 = new Song
             {
-                name = "Another Song Title"
+                Name = "Another Song Title"
             };
             
             var setWithTwoSongs = new Set
             {
-                song = new List<Song>
+                Song = new List<Song>
                 {
                     song1, song2
                 }
@@ -88,7 +88,7 @@ namespace SpotSet.Api.Tests.Services
 
             var newSets = new Sets
             {
-                set = new List<Set>
+                Set = new List<Set>
                 {
                     setWithTwoSongs
                 }
@@ -96,11 +96,11 @@ namespace SpotSet.Api.Tests.Services
 
             var newSetlist = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = new Artist { name = "Artist" },
-                venue = new Venue { name = "Venue" },
-                sets = newSets
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Sets = newSets
             };
             
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
@@ -114,11 +114,11 @@ namespace SpotSet.Api.Tests.Services
         {
             var newSetlist = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = null,
-                venue = null,
-                sets = new Sets { set = new List<Set>() }
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = null,
+                Venue = null,
+                Sets = new Sets { Set = new List<Set>() }
             };
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var result = await successSetlistService.SpotifyRequest(newSetlist);
@@ -131,20 +131,20 @@ namespace SpotSet.Api.Tests.Services
         {
             var newSetlist = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = new Artist { name = "Artist" },
-                venue = new Venue { name = "Venue" },
-                sets = new Sets
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Sets = new Sets
                 {
-                    set = new List<Set>
+                    Set = new List<Set>
                     {
                         new Set
                         {
-                            song = new List<Song>
+                            Song = new List<Song>
                             {
-                                new Song { name = "Song Title" }, 
-                                new Song { name = "Another Song Title" }
+                                new Song { Name = "Song Title" }, 
+                                new Song { Name = "Another Song Title" }
                             }
                         }
                     }
@@ -153,13 +153,13 @@ namespace SpotSet.Api.Tests.Services
 
          
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
-            var result = await successSetlistService.GetSetlist(newSetlist.id);
+            var result = await successSetlistService.GetSetlist(newSetlist.Id);
     
             Assert.IsType<SpotSetDto>(result);
-            Assert.Equal(newSetlist.id, result.Id);
+            Assert.Equal(newSetlist.Id, result.Id);
             Assert.Equal("07-01-2019", result.EventDate);
-            Assert.Equal(newSetlist.artist.name, result.Artist);
-            Assert.Equal(newSetlist.venue.name, result.Venue);
+            Assert.Equal(newSetlist.Artist.Name, result.Artist);
+            Assert.Equal(newSetlist.Venue.Name, result.Venue);
         }
     }
 }

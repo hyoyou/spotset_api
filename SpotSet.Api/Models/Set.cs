@@ -4,6 +4,6 @@ namespace SpotSet.Api.Models
 {
     public class Set
     {
-        public ICollection<Song> song { get; set; }
+        public ICollection<Song> Song { get; set; }
     }
 }

@@ -2,10 +2,10 @@ namespace SpotSet.Api.Models
 {
     public class SetlistDto
     {
-        public string id { get; set; }
-        public string eventDate { get; set; }
-        public Artist artist { get; set; }
-        public Venue venue { get; set; }
-        public Sets sets { get; set; }
+        public string Id { get; set; }
+        public string EventDate { get; set; }
+        public Artist Artist { get; set; }
+        public Venue Venue { get; set; }
+        public Sets Sets { get; set; }
     }
 }

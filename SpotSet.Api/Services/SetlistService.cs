@@ -26,13 +26,13 @@ namespace SpotSet.Api.Services
             if (setlistModel == null) return null;
             // TODO: raise specific error
             var spotifyModel = await SpotifyRequest(setlistModel);
-            var tracksDto = MapSongToTrackUri(setlistModel.sets.set, spotifyModel.SpotifyTracks);
+            var tracksDto = MapSongToTrackUri(setlistModel.Sets.Set, spotifyModel.SpotifyTracks);
             var setlistDto = new SpotSetDto
             {
-                Id = setlistModel.id,
-                EventDate = FormatEventDate(setlistModel.eventDate),
-                Artist = setlistModel.artist.name,
-                Venue = setlistModel.venue.name,
+                Id = setlistModel.Id,
+                EventDate = FormatEventDate(setlistModel.EventDate),
+                Artist = setlistModel.Artist.Name,
+                Venue = setlistModel.Venue.Name,
                 Tracks = tracksDto
             };
             return setlistDto;
@@ -62,15 +62,15 @@ namespace SpotSet.Api.Services
         public async Task<SpotifyTracksDto> SpotifyRequest(SetlistDto setlistmodel)
         {
             var spotifyHttpClient = _httpFactory.CreateClient(HttpConstants.SpotifyClient);
-            var artist = setlistmodel?.artist?.name;
+            var artist = setlistmodel?.Artist?.Name;
             var spotifyTracks = new SpotifyTracksDto();
             
-            foreach (var set in setlistmodel?.sets?.set)
+            foreach (var set in setlistmodel?.Sets?.Set)
             {
-                foreach (var song in set.song)
+                foreach (var song in set.Song)
                 {
                     var spotifyResponse = await spotifyHttpClient.GetAsync(
-                        $"search?query=artist%3A{artist}+track%3A{song.name}&type=track&offset=0&limit=1");
+                        $"search?query=artist%3A{artist}+track%3A{song.Name}&type=track&offset=0&limit=1");
                     if (spotifyResponse.StatusCode == HttpStatusCode.OK)
                     {
                         var spotifyTrack = DeserializeSpotifyTracks(spotifyResponse);
@@ -96,12 +96,12 @@ namespace SpotSet.Api.Services
 
             foreach (var set in sets)
             {
-                foreach (var song in set.song)
+                foreach (var song in set.Song)
                 {
                     var tracksDto = new TracksDto
                     {
-                        Name = song.name,
-                        TrackUri = MatchTrackUri(song.name, spotifyModel)
+                        Name = song.Name,
+                        TrackUri = MatchTrackUri(song.Name, spotifyModel)
                     };
                     
                     mappedTracks.Add(tracksDto);   

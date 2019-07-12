@@ -22,20 +22,20 @@ namespace SpotSet.Api.Tests.Controllers
         {
             var newSetlist = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = new Artist { name = "Artist" },
-                venue = new Venue { name = "Venue" },
-                sets = new Sets
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Sets = new Sets
                 {
-                    set = new List<Set>
+                    Set = new List<Set>
                     {
                         new Set
                         {
-                            song = new List<Song>
+                            Song = new List<Song>
                             {
-                                new Song { name = "Song Title" }, 
-                                new Song { name = "Another Song Title" }
+                                new Song { Name = "Song Title" }, 
+                                new Song { Name = "Another Song Title" }
                             }
                         }
                     }
@@ -55,20 +55,20 @@ namespace SpotSet.Api.Tests.Controllers
         {
             var newSetlist = new SetlistDto
             {
-                id = "setlistId",
-                eventDate = "01-07-2019",
-                artist = new Artist { name = "Artist" },
-                venue = new Venue { name = "Venue" },
-                sets = new Sets
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Sets = new Sets
                 {
-                    set = new List<Set>
+                    Set = new List<Set>
                     {
                         new Set
                         {
-                            song = new List<Song>
+                            Song = new List<Song>
                             {
-                                new Song { name = "Song Title" }, 
-                                new Song { name = "Another Song Title" }
+                                new Song { Name = "Song Title" }, 
+                                new Song { Name = "Another Song Title" }
                             }
                         }
                     }
