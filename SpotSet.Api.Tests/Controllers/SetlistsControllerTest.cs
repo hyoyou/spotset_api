@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using SpotSet.Api.Controllers;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
-using SpotSet.Api.Tests.Mocks;
+using SpotSet.Api.Tests.Helpers;
 using Xunit;
 
 namespace SpotSet.Api.Tests.Controllers
@@ -17,17 +20,32 @@ namespace SpotSet.Api.Tests.Controllers
         [Fact]
         public async void GivenSetlistServiceReturnsASuccessResult_WhenCallingGetSetlist_ThenItReturnsAStatus200()
         {
-            var id = "setlistId";
-            var eventDate = "01-07-2019";
-            var artistData = new Artist { name = null };
-            var venueData = new Venue { name = null };
-            var setsData = new Sets { set = null };
+            var newSetlist = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = new Artist { name = "Artist" },
+                venue = new Venue { name = "Venue" },
+                sets = new Sets
+                {
+                    set = new List<Set>
+                    {
+                        new Set
+                        {
+                            song = new List<Song>
+                            {
+                                new Song { name = "Song Title" }, 
+                                new Song { name = "Another Song Title" }
+                            }
+                        }
+                    }
+                }
+            };
             
-            var newSetlist = TestSetup.CreateSetlist(id, eventDate, artistData, venueData, setsData);
-            var service = TestSetup.CreateSuccessSetlistServiceWithMocks(newSetlist);
+            var service = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var controller = CreateController(service);
             
-            var result = await controller.GetSetlist(newSetlist.id);
+            var result = await controller.GetSetlist("setlistId");
             
             Assert.IsType<OkObjectResult>(result);
         }
@@ -35,7 +53,29 @@ namespace SpotSet.Api.Tests.Controllers
         [Fact]
         public async void GivenSetlistServiceReturnsAnErrorResult_WhenCallingGetSetlist_ThenItReturnsAStatus404()
         {
-            var service = TestSetup.CreateErrorSetlistServiceWithMocks();
+            var newSetlist = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = new Artist { name = "Artist" },
+                venue = new Venue { name = "Venue" },
+                sets = new Sets
+                {
+                    set = new List<Set>
+                    {
+                        new Set
+                        {
+                            song = new List<Song>
+                            {
+                                new Song { name = "Song Title" }, 
+                                new Song { name = "Another Song Title" }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            var service = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.NotFound, newSetlist);
             var controller = CreateController(service);
             
             var result = await controller.GetSetlist("invalidId");

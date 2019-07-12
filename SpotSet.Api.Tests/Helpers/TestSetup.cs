@@ -1,92 +1,65 @@
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
+using SpotSet.Api.Tests.Mocks;
 
-namespace SpotSet.Api.Tests.Mocks
+namespace SpotSet.Api.Tests.Helpers
 {
     public static class TestSetup
     {
-        public static Setlist CreateSetlist(string id, string eventDate, Artist artistData, Venue venueData, Sets setsData)
+        public static string SerializeObject(object content)
         {
-            return new Setlist
-            {
-                id = id,
-                eventDate = eventDate,
-                artist = artistData,
-                venue = venueData,
-                sets = setsData
-            };
+            return JsonConvert.SerializeObject(content);
         }
         
-        private static string SerializeSetlist(Setlist newSetlist)
+        public static Mock<HttpMessageHandler> CreateMockHttpMessageHandler(HttpStatusCode statusCode, string serializedContent)
         {
-            return JsonConvert.SerializeObject(newSetlist);
-        }
-        
-        private static Mock<HttpMessageHandler> CreateMockSuccessHttpMessageHandler(string serializedSetlist)
-        {
-            var mockSuccessHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            mockSuccessHttpMessageHandler
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>()
                 )
-                .ReturnsAsync(new HttpResponseMessage()
+                .ReturnsAsync(new HttpResponseMessage
                 {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(serializedSetlist, Encoding.UTF8, "application/json")
+                    StatusCode = statusCode,
+                    Content = new StringContent(serializedContent, Encoding.UTF8, "application/json")
                 })
                 .Verifiable();
             
-            return mockSuccessHttpMessageHandler;
+            return mockHttpMessageHandler;
         }
         
-        private static Mock<HttpMessageHandler> CreateMockErrorHttpMessageHandler()
+        public static SetlistService CreateSetlistServiceWithMocks(HttpStatusCode statusCode, object content = null)
         {
-            var mockErrorHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            mockErrorHttpMessageHandler
-                .Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(new HttpResponseMessage()
-                {
-                    StatusCode = HttpStatusCode.NotFound,
-                    Content = new StringContent("content not found", Encoding.UTF8, "application/json")
-                })
-                .Verifiable();
-            
-            return mockErrorHttpMessageHandler;
-        }
-
-        public static SetlistService CreateSuccessSetlistServiceWithMocks(Setlist newSetlist)
-        {
-            var serializedSetlist = SerializeSetlist(newSetlist);
-            var mockSuccessHttpMessageHandler = CreateMockSuccessHttpMessageHandler(serializedSetlist);
-            var mockHttpClient = new HttpClient(mockSuccessHttpMessageHandler.Object);
+            var serializedSetlist = SerializeObject(content);
+            var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
+            var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
             var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
             
             return new SetlistService(mockHttpClientFactory);
         }
 
-        public static SetlistService CreateErrorSetlistServiceWithMocks()
+        public static SpotifyService CreateSpotifyServiceWithMocks(HttpStatusCode statusCode, SpotifyAccessToken accessToken)
         {
-            var mockErrorHttpMessageHandler = CreateMockErrorHttpMessageHandler();
-            var mockHttpClient = new HttpClient(mockErrorHttpMessageHandler.Object);
+            var serializedToken = SerializeObject(accessToken);
+            var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedToken);
+            var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
             var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
+            var mockConfiguration = new MockConfiguration();
             
-            return new SetlistService(mockHttpClientFactory);
+            return new SpotifyService(mockHttpClientFactory, mockConfiguration);
         }
     }
 }

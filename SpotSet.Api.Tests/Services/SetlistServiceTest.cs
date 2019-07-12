@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Net;
 using SpotSet.Api.Models;
-using SpotSet.Api.Tests.Mocks;
+using SpotSet.Api.Tests.Helpers;
 using Xunit;
 
 namespace SpotSet.Api.Tests.Services
@@ -8,79 +9,157 @@ namespace SpotSet.Api.Tests.Services
     public class SetlistServiceTest
     {
         [Fact]
-        public async void GetSetlistReturnsASetlistModelWhenCalledWithSetlistId()
+        public async void SetlistRequestReturnsASetlistModelWhenCalledWithSetlistId()
         {
-            var id = "setlistId";
-            var eventDate = "01-07-2019";
-            var artistData = new Artist { name = "Artist" };
-            var venueData = new Venue { name = "Venue" };
-            var setsData = new Sets { set = new List<Set>() };
+            var newSetlist = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = new Artist { name = "Artist" },
+                venue = new Venue { name = "Venue" },
+                sets = new Sets { set = new List<Set>() }
+            };
             
-            var newSetlist = TestSetup.CreateSetlist(id, eventDate, artistData, venueData, setsData);
-            var successSetlistService = TestSetup.CreateSuccessSetlistServiceWithMocks(newSetlist);
+            var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             
-            var result = await successSetlistService.GetSetlist(newSetlist.id);
-            
+            var result = await successSetlistService.SetlistRequest(newSetlist.id);
+    
             Assert.IsType<Setlist>(result);
             Assert.Equal(newSetlist.id, result.id);
             Assert.Equal(newSetlist.eventDate, result.eventDate);
             Assert.Equal(newSetlist.artist.name, result.artist.name);
             Assert.Equal(newSetlist.venue.name, result.venue.name);
-            Assert.Equal(newSetlist.sets.set, result.sets.set);
         }
         
         [Fact]
-        public async void GetSetlistReturnsASetlistModelWhenCalledWithSetlistIdWhichHasMissingData()
+        public async void SetlistRequestReturnsASetlistModelWhenCalledWithSetlistIdWhichHasMissingData()
         {
-            var id = "setlistId";
-            var eventDate = "01-07-2019";
-            var artistData = new Artist { name = null };
-            var venueData = new Venue { name = null };
-            var setsData = new Sets { set = null };
+            var newSetlistWithMissingData = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = null,
+                venue = null,
+                sets = new Sets { set = new List<Set>() }
+            };
             
-            var newSetlist = TestSetup.CreateSetlist(id, eventDate, artistData, venueData, setsData);
-            var successSetlistService = TestSetup.CreateSuccessSetlistServiceWithMocks(newSetlist);
+            var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlistWithMissingData);
             
-            var result = await successSetlistService.GetSetlist(newSetlist.id);
-            
+            var result = await successSetlistService.SetlistRequest(newSetlistWithMissingData.id);
+    
             Assert.IsType<Setlist>(result);
-            Assert.Equal(newSetlist.id, result.id);
-            Assert.Equal(newSetlist.eventDate, result.eventDate);
-            Assert.Null(result.artist.name);
-            Assert.Null(result.venue.name);
-            Assert.Null(result.sets.set);
+            Assert.Equal(newSetlistWithMissingData.id, result.id);
+            Assert.Equal(newSetlistWithMissingData.eventDate, result.eventDate);
+            Assert.Null(result.artist);
+            Assert.Null(result.venue);
+            Assert.Equal(newSetlistWithMissingData.sets.set, result.sets.set);
         }
 
         [Fact]
-        public async void GetSetlistReturnsNullWhenCalledWithSetlistIdWhichResultsInError()
+        public async void SetlistRequestReturnsNullWhenCalledWithSetlistIdWhichResultsInError()
         {
-            var errorSetlistService = TestSetup.CreateErrorSetlistServiceWithMocks();
-
-            var result = await errorSetlistService.GetSetlist("invalidId");
+            var errorSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.NotFound);
+            
+            var result = await errorSetlistService.SetlistRequest("invalidId");
 
             Assert.Null(result);
         }
-        
+
         [Fact]
-        public async void GetSetlistAddsTrackUrisToTheSongModelWhenCalledWithSetlistId()
+        public async void SpotifyRequestReturnsASpotifyModelWhenCalledWithSetlistModel()
         {
-            var id = "setlistId";
-            var eventDate = "01-07-2019";
-            var artistData = new Artist { name = "Artist" };
-            var venueData = new Venue { name = "Venue" };
-            var setsData = new Sets { set = new List<Set>() };
+            var song1 = new Song
+            {
+                name = "Song Title"
+            };
             
-            var newSetlist = TestSetup.CreateSetlist(id, eventDate, artistData, venueData, setsData);
-            var successSetlistService = TestSetup.CreateSuccessSetlistServiceWithMocks(newSetlist);
+            var song2 = new Song
+            {
+                name = "Another Song Title"
+            };
             
+            var setWithTwoSongs = new Set
+            {
+                song = new List<Song>
+                {
+                    song1, song2
+                }
+            };
+
+            var newSets = new Sets
+            {
+                set = new List<Set>
+                {
+                    setWithTwoSongs
+                }
+            };
+
+            var newSetlist = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = new Artist { name = "Artist" },
+                venue = new Venue { name = "Venue" },
+                sets = newSets
+            };
+            
+            var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
+            var result = await successSetlistService.SpotifyRequest(newSetlist);
+
+            Assert.IsType<SpotifyTracksDto>(result);
+        }
+
+        [Fact]
+        public async void SpotifyRequestReturnsNullWhenCalledWithAnInvalidSetlistModel()
+        {
+            var newSetlist = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = null,
+                venue = null,
+                sets = new Sets { set = new List<Set>() }
+            };
+            var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
+            var result = await successSetlistService.SpotifyRequest(newSetlist);
+            
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async void GetSetlistReturnsASetlistDtoWhenCalledWithSetlistIdThatReturnsValidData()
+        {
+            var newSetlist = new Setlist
+            {
+                id = "setlistId",
+                eventDate = "01-07-2019",
+                artist = new Artist { name = "Artist" },
+                venue = new Venue { name = "Venue" },
+                sets = new Sets
+                {
+                    set = new List<Set>
+                    {
+                        new Set
+                        {
+                            song = new List<Song>
+                            {
+                                new Song { name = "Song Title" }, 
+                                new Song { name = "Another Song Title" }
+                            }
+                        }
+                    }
+                }
+            };
+
+         
+            var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var result = await successSetlistService.GetSetlist(newSetlist.id);
-            
-            Assert.IsType<Setlist>(result);
+    
+            Assert.IsType<SetlistDto>(result);
             Assert.Equal(newSetlist.id, result.id);
-            Assert.Equal(newSetlist.eventDate, result.eventDate);
-            Assert.Equal(newSetlist.artist.name, result.artist.name);
-            Assert.Equal(newSetlist.venue.name, result.venue.name);
-            Assert.Equal(newSetlist.sets.set, result.sets.set);
+            Assert.Equal("07-01-2019", result.eventDate);
+            Assert.Equal(newSetlist.artist.name, result.artist);
+            Assert.Equal(newSetlist.venue.name, result.venue);
         }
     }
 }
