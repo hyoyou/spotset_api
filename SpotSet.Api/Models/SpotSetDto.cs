@@ -4,10 +4,10 @@ namespace SpotSet.Api.Models
 {
     public class SpotSetDto
     {
-        public string id { get; set; }
-        public string eventDate { get; set; }
-        public string artist { get; set; }
-        public string venue { get; set; }
-        public List<TracksDto> tracks { get; set; }
+        public string Id { get; set; }
+        public string EventDate { get; set; }
+        public string Artist { get; set; }
+        public string Venue { get; set; }
+        public List<TracksDto> Tracks { get; set; }
     }
 }

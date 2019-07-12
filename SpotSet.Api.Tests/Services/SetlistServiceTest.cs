@@ -156,10 +156,10 @@ namespace SpotSet.Api.Tests.Services
             var result = await successSetlistService.GetSetlist(newSetlist.id);
     
             Assert.IsType<SpotSetDto>(result);
-            Assert.Equal(newSetlist.id, result.id);
-            Assert.Equal("07-01-2019", result.eventDate);
-            Assert.Equal(newSetlist.artist.name, result.artist);
-            Assert.Equal(newSetlist.venue.name, result.venue);
+            Assert.Equal(newSetlist.id, result.Id);
+            Assert.Equal("07-01-2019", result.EventDate);
+            Assert.Equal(newSetlist.artist.name, result.Artist);
+            Assert.Equal(newSetlist.venue.name, result.Venue);
         }
     }
 }

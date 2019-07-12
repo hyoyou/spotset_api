@@ -29,11 +29,11 @@ namespace SpotSet.Api.Services
             var tracksDto = MapSongToTrackUri(setlistModel.sets.set, spotifyModel.SpotifyTracks);
             var setlistDto = new SpotSetDto
             {
-                id = setlistModel.id,
-                eventDate = FormatEventDate(setlistModel.eventDate),
-                artist = setlistModel.artist.name,
-                venue = setlistModel.venue.name,
-                tracks = tracksDto
+                Id = setlistModel.id,
+                EventDate = FormatEventDate(setlistModel.eventDate),
+                Artist = setlistModel.artist.name,
+                Venue = setlistModel.venue.name,
+                Tracks = tracksDto
             };
             return setlistDto;
         }
