@@ -20,7 +20,7 @@ namespace SpotSet.Api.Tests.Controllers
         [Fact]
         public async void GivenSetlistServiceReturnsASuccessResult_WhenCallingGetSetlist_ThenItReturnsAStatus200()
         {
-            var newSetlist = new Setlist
+            var newSetlist = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",
@@ -53,7 +53,7 @@ namespace SpotSet.Api.Tests.Controllers
         [Fact]
         public async void GivenSetlistServiceReturnsAnErrorResult_WhenCallingGetSetlist_ThenItReturnsAStatus404()
         {
-            var newSetlist = new Setlist
+            var newSetlist = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",

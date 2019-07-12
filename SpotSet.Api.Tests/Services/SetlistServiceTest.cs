@@ -11,7 +11,7 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void SetlistRequestReturnsASetlistModelWhenCalledWithSetlistId()
         {
-            var newSetlist = new Setlist
+            var newSetlist = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",
@@ -24,7 +24,7 @@ namespace SpotSet.Api.Tests.Services
             
             var result = await successSetlistService.SetlistRequest(newSetlist.id);
     
-            Assert.IsType<Setlist>(result);
+            Assert.IsType<SetlistDto>(result);
             Assert.Equal(newSetlist.id, result.id);
             Assert.Equal(newSetlist.eventDate, result.eventDate);
             Assert.Equal(newSetlist.artist.name, result.artist.name);
@@ -34,7 +34,7 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void SetlistRequestReturnsASetlistModelWhenCalledWithSetlistIdWhichHasMissingData()
         {
-            var newSetlistWithMissingData = new Setlist
+            var newSetlistWithMissingData = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",
@@ -47,7 +47,7 @@ namespace SpotSet.Api.Tests.Services
             
             var result = await successSetlistService.SetlistRequest(newSetlistWithMissingData.id);
     
-            Assert.IsType<Setlist>(result);
+            Assert.IsType<SetlistDto>(result);
             Assert.Equal(newSetlistWithMissingData.id, result.id);
             Assert.Equal(newSetlistWithMissingData.eventDate, result.eventDate);
             Assert.Null(result.artist);
@@ -94,7 +94,7 @@ namespace SpotSet.Api.Tests.Services
                 }
             };
 
-            var newSetlist = new Setlist
+            var newSetlist = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",
@@ -112,7 +112,7 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void SpotifyRequestReturnsNullWhenCalledWithAnInvalidSetlistModel()
         {
-            var newSetlist = new Setlist
+            var newSetlist = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",
@@ -129,7 +129,7 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void GetSetlistReturnsASpotSetDtoWhenCalledWithSetlistIdThatReturnsValidData()
         {
-            var newSetlist = new Setlist
+            var newSetlist = new SetlistDto
             {
                 id = "setlistId",
                 eventDate = "01-07-2019",

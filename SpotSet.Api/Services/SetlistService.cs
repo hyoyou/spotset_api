@@ -38,7 +38,7 @@ namespace SpotSet.Api.Services
             return setlistDto;
         }
 
-        public async Task<Setlist> SetlistRequest(string setlistId)
+        public async Task<SetlistDto> SetlistRequest(string setlistId)
         {
             var uri = $"setlist/{setlistId}";
             
@@ -53,13 +53,13 @@ namespace SpotSet.Api.Services
             return null;
         }
         
-        private static async Task<Setlist> DeserializeSetlist(HttpResponseMessage response)
+        private static async Task<SetlistDto> DeserializeSetlist(HttpResponseMessage response)
         {
             var setlist = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Setlist>(setlist);
+            return JsonConvert.DeserializeObject<SetlistDto>(setlist);
         }
         
-        public async Task<SpotifyTracksDto> SpotifyRequest(Setlist setlistmodel)
+        public async Task<SpotifyTracksDto> SpotifyRequest(SetlistDto setlistmodel)
         {
             var spotifyHttpClient = _httpFactory.CreateClient(HttpConstants.SpotifyClient);
             var artist = setlistmodel?.artist?.name;
