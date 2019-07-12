@@ -127,7 +127,7 @@ namespace SpotSet.Api.Tests.Services
         }
 
         [Fact]
-        public async void GetSetlistReturnsASetlistDtoWhenCalledWithSetlistIdThatReturnsValidData()
+        public async void GetSetlistReturnsASpotSetDtoWhenCalledWithSetlistIdThatReturnsValidData()
         {
             var newSetlist = new Setlist
             {
@@ -155,7 +155,7 @@ namespace SpotSet.Api.Tests.Services
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var result = await successSetlistService.GetSetlist(newSetlist.id);
     
-            Assert.IsType<SetlistDto>(result);
+            Assert.IsType<SpotSetDto>(result);
             Assert.Equal(newSetlist.id, result.id);
             Assert.Equal("07-01-2019", result.eventDate);
             Assert.Equal(newSetlist.artist.name, result.artist);

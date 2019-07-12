@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SpotSet.Api.Models
 {
-    public class SetlistDto
+    public class SpotSetDto
     {
         public string id { get; set; }
         public string eventDate { get; set; }

@@ -20,14 +20,14 @@ namespace SpotSet.Api.Services
             _httpFactory = httpFactory;
         }
 
-        public async Task<SetlistDto> GetSetlist(string setlistId)
+        public async Task<SpotSetDto> GetSetlist(string setlistId)
         {
             var setlistModel = await SetlistRequest(setlistId);
             if (setlistModel == null) return null;
             // TODO: raise specific error
             var spotifyModel = await SpotifyRequest(setlistModel);
             var tracksDto = MapSongToTrackUri(setlistModel.sets.set, spotifyModel.SpotifyTracks);
-            var setlistDto = new SetlistDto
+            var setlistDto = new SpotSetDto
             {
                 id = setlistModel.id,
                 eventDate = FormatEventDate(setlistModel.eventDate),
