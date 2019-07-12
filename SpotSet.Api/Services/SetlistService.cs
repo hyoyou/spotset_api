@@ -77,11 +77,9 @@ namespace SpotSet.Api.Services
                         spotifyTracks.Add(spotifyTrack.Result);
                     }
                 }
-
-                return spotifyTracks;
             }
-
-            return null;
+            
+            return spotifyTracks;
         }
         
         private static async Task<SpotifyTracks> DeserializeSpotifyTracks(HttpResponseMessage response)

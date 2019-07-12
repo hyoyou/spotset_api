@@ -110,7 +110,7 @@ namespace SpotSet.Api.Tests.Services
         }
 
         [Fact]
-        public async void SpotifyRequestReturnsNullWhenCalledWithAnInvalidSetlistModel()
+        public async void SpotifyRequestReturnsEmptySpotifyTracksModelWhenCalledWithAnInvalidSetlistModel()
         {
             var newSetlist = new SetlistDto
             {
@@ -123,7 +123,7 @@ namespace SpotSet.Api.Tests.Services
             var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var result = await successSetlistService.SpotifyRequest(newSetlist);
             
-            Assert.Null(result);
+            Assert.Equal(0, result.SpotifyTracks.Count);
         }
 
         [Fact]
