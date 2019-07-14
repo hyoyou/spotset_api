@@ -12,12 +12,12 @@ using SpotSet.Api.Models;
 
 namespace SpotSet.Api.Services
 {
-    public class SpotifyService : ISpotifyService
+    public class SpotifyAuthService : ISpotifyAuthService
     {
         private IHttpClientFactory _httpFactory;
         private readonly IConfiguration _configuration;
 
-        public SpotifyService(IHttpClientFactory httpFactory, IConfiguration configuration)
+        public SpotifyAuthService(IHttpClientFactory httpFactory, IConfiguration configuration)
         {
             _httpFactory = httpFactory;
             _configuration = configuration;

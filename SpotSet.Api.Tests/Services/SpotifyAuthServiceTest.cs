@@ -5,7 +5,7 @@ using Xunit;
 
 namespace SpotSet.Api.Tests.Services
 {
-    public class SpotifyServiceTest
+    public class SpotifyAuthServiceTest
     {
         [Fact]
         public void GetAccessTokenReturnsASpotifyAccessTokenModelWhenCalled()

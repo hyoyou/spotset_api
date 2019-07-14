@@ -7,24 +7,24 @@ namespace SpotSet.Api.Controllers
     [ApiController]
     public class AuthController : Controller
     {
-        private readonly ISpotifyService _spotifyService;
+        private readonly ISpotifyAuthService _spotifyAuthService;
 
-        public AuthController(ISpotifyService spotifyService)
+        public AuthController(ISpotifyAuthService spotifyAuthService)
         { 
-            _spotifyService = spotifyService;
+            _spotifyAuthService = spotifyAuthService;
         }
     
         [HttpGet("/login")]
         public async Task<RedirectResult> GetUserAuthentication()
         {
-            var result = await _spotifyService.GetUserAuthentication();
+            var result = await _spotifyAuthService.GetUserAuthentication();
             return Redirect(result);
         }
         
         [HttpGet("/callback")]
         public async Task<ActionResult> GetUserAuthorization([FromQuery]string code)
         {
-            var result = await _spotifyService.GetUserAuthorization(code);
+            var result = await _spotifyAuthService.GetUserAuthorization(code);
             
             if (result == null)
             {

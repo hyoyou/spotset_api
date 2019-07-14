@@ -3,7 +3,7 @@ using SpotSet.Api.Models;
 
 namespace SpotSet.Api.Services
 {
-    public interface ISpotifyService
+    public interface ISpotifyAuthService
     {
         Task<string> GetAccessToken();
         Task<string> GetUserAuthentication();
