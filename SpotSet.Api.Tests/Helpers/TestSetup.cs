@@ -48,7 +48,7 @@ namespace SpotSet.Api.Tests.Helpers
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
             var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
             
-            return new SetlistService(mockHttpClientFactory);
+            return new SetlistService(mockHttpClientFactory, new SetlistFmService(mockHttpClientFactory));
         }
 
         public static SpotifyAuthService CreateSpotifyServiceWithMocks(HttpStatusCode statusCode, SpotifyAccessToken accessToken)
@@ -60,6 +60,16 @@ namespace SpotSet.Api.Tests.Helpers
             var mockConfiguration = new MockConfiguration();
             
             return new SpotifyAuthService(mockHttpClientFactory, mockConfiguration);
+        }
+
+        public static SetlistFmService CreateSetlistFmServiceWithMocks(HttpStatusCode statusCode, object content = null)
+        {
+            var serializedSetlist = SerializeObject(content);
+            var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
+            var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
+            var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
+            
+            return new SetlistFmService(mockHttpClientFactory);
         }
     }
 }

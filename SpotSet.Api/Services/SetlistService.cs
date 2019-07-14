@@ -14,15 +14,17 @@ namespace SpotSet.Api.Services
     public class SetlistService : ISetlistService
     {
         private static IHttpClientFactory _httpFactory;
+        private static ISetlistFmService _setlistFmService;
 
-        public SetlistService(IHttpClientFactory httpFactory)
+        public SetlistService(IHttpClientFactory httpFactory, ISetlistFmService setlistFmService)
         {
             _httpFactory = httpFactory;
+            _setlistFmService = setlistFmService;
         }
 
         public async Task<SpotSetDto> GetSetlist(string setlistId)
         {
-            var setlistModel = await SetlistRequest(setlistId);
+            var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
             if (setlistModel == null) return null;
 
             var spotifyModel = await SpotifyRequest(setlistModel);
@@ -38,27 +40,6 @@ namespace SpotSet.Api.Services
             return setlistDto;
         }
 
-        public async Task<SetlistDto> SetlistRequest(string setlistId)
-        {
-            var uri = $"setlist/{setlistId}";
-            
-            var httpClient = _httpFactory.CreateClient(HttpConstants.SetlistClient);
-            HttpResponseMessage response = await httpClient.GetAsync(uri);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                return await DeserializeSetlist(response);
-            }
-
-            return null;
-        }
-        
-        private static async Task<SetlistDto> DeserializeSetlist(HttpResponseMessage response)
-        {
-            var setlist = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<SetlistDto>(setlist);
-        }
-        
         public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistmodel)
         {
             var spotifyHttpClient = _httpFactory.CreateClient(HttpConstants.SpotifyClient);
