@@ -50,7 +50,7 @@ namespace SpotSet.Api
                     client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
                 })
                 .AddHttpMessageHandler<AppAuthorizationHandler>();
-            services.AddSingleton<ISetlistService, SetlistService>();
+            services.AddSingleton<ISpotSetService, SpotSetService>();
             services.AddSingleton<ISetlistFmService, SetlistFmService>();
             services.AddSingleton<ISpotifyService, SpotifyService>();
             services.AddSingleton<ISpotifyAuthService, SpotifyAuthService>();

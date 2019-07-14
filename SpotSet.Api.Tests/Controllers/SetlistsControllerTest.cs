@@ -12,9 +12,9 @@ namespace SpotSet.Api.Tests.Controllers
 {
     public class SetlistsControllerTest
     {
-        private SetlistsController CreateController(SetlistService setlistService)
+        private SetlistsController CreateController(SpotSetService spotSetService)
         {
-            return new SetlistsController(setlistService);
+            return new SetlistsController(spotSetService);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace SpotSet.Api.Tests.Controllers
                 }
             };
             
-            var service = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
+            var service = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var controller = CreateController(service);
             
             var result = await controller.GetSetlist("setlistId");
@@ -75,7 +75,7 @@ namespace SpotSet.Api.Tests.Controllers
                 }
             };
             
-            var service = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.NotFound, newSetlist);
+            var service = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.NotFound, newSetlist);
             var controller = CreateController(service);
             
             var result = await controller.GetSetlist("invalidId");

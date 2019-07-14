@@ -8,13 +8,13 @@ using SpotSet.Api.Models;
 
 namespace SpotSet.Api.Services
 {
-    public class SetlistService : ISetlistService
+    public class SpotSetService : ISpotSetService
     {
         private static IHttpClientFactory _httpClientFactory;
         private static ISetlistFmService _setlistFmService;
         private static ISpotifyService _spotifyService;
 
-        public SetlistService(IHttpClientFactory httpClientFactory, ISetlistFmService setlistFmService, ISpotifyService spotifyService)
+        public SpotSetService(IHttpClientFactory httpClientFactory, ISetlistFmService setlistFmService, ISpotifyService spotifyService)
         {
             _httpClientFactory = httpClientFactory;
             _setlistFmService = setlistFmService;

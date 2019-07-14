@@ -8,17 +8,17 @@ namespace SpotSet.Api.Controllers
     [ApiController]
     public class SetlistsController : Controller
     {
-        private readonly ISetlistService _setlistService;
+        private readonly ISpotSetService _spotSetService;
 
-        public SetlistsController(ISetlistService setlistService)
+        public SetlistsController(ISpotSetService spotSetService)
         { 
-            _setlistService = setlistService;
+            _spotSetService = spotSetService;
         }
     
         [HttpGet("{setlistId}")]
         public async Task<ActionResult> GetSetlist(string setlistId)
         {
-            var result = await _setlistService.GetSetlist(setlistId);
+            var result = await _spotSetService.GetSetlist(setlistId);
 
             if (result == null)
             {

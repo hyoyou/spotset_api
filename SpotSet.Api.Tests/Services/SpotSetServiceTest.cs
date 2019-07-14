@@ -6,7 +6,7 @@ using Xunit;
 
 namespace SpotSet.Api.Tests.Services
 {
-    public class SetlistServiceTest
+    public class SpotSetServiceTest
     {
         [Fact]
         public async void GetSetlistReturnsASpotSetDtoWhenCalledWithSetlistIdThatReturnsValidData()
@@ -34,7 +34,7 @@ namespace SpotSet.Api.Tests.Services
             };
 
          
-            var successSetlistService = TestSetup.CreateSetlistServiceWithMocks(HttpStatusCode.OK, newSetlist);
+            var successSetlistService = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.OK, newSetlist);
             var result = await successSetlistService.GetSetlist(newSetlist.Id);
     
             Assert.IsType<SpotSetDto>(result);

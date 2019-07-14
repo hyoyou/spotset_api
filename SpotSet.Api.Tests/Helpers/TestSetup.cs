@@ -41,17 +41,17 @@ namespace SpotSet.Api.Tests.Helpers
             return mockHttpMessageHandler;
         }
         
-        public static SetlistService CreateSetlistServiceWithMocks(HttpStatusCode statusCode, object content = null)
+        public static SpotSetService CreateSpotSetServiceWithMocks(HttpStatusCode statusCode, object content = null)
         {
             var serializedSetlist = SerializeObject(content);
             var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
             var mockHttpClientFactory= new MockHttpClientFactory(mockHttpClient);
             
-            return new SetlistService(mockHttpClientFactory, new SetlistFmService(mockHttpClientFactory), new SpotifyService(mockHttpClientFactory));
+            return new SpotSetService(mockHttpClientFactory, new SetlistFmService(mockHttpClientFactory), new SpotifyService(mockHttpClientFactory));
         }
 
-        public static SpotifyAuthService CreateSpotifyServiceWithMocks(HttpStatusCode statusCode, SpotifyAccessToken accessToken)
+        public static SpotifyAuthService CreateSpotifyAuthServiceWithMocks(HttpStatusCode statusCode, SpotifyAccessToken accessToken)
         {
             var serializedToken = SerializeObject(accessToken);
             var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedToken);
