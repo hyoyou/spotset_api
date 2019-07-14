@@ -52,6 +52,7 @@ namespace SpotSet.Api
                 .AddHttpMessageHandler<AppAuthorizationHandler>();
             services.AddSingleton<ISetlistService, SetlistService>();
             services.AddSingleton<ISetlistFmService, SetlistFmService>();
+            services.AddSingleton<ISpotifyService, SpotifyService>();
             services.AddSingleton<ISpotifyAuthService, SpotifyAuthService>();
 
             services.AddCors(options =>

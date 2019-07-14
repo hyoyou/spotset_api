@@ -2,24 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SpotSet.Api.Constants;
 using SpotSet.Api.Models;
 
 namespace SpotSet.Api.Services
 {
     public class SetlistService : ISetlistService
     {
-        private static IHttpClientFactory _httpFactory;
+        private static IHttpClientFactory _httpClientFactory;
         private static ISetlistFmService _setlistFmService;
+        private static ISpotifyService _spotifyService;
 
-        public SetlistService(IHttpClientFactory httpFactory, ISetlistFmService setlistFmService)
+        public SetlistService(IHttpClientFactory httpClientFactory, ISetlistFmService setlistFmService, ISpotifyService spotifyService)
         {
-            _httpFactory = httpFactory;
+            _httpClientFactory = httpClientFactory;
             _setlistFmService = setlistFmService;
+            _spotifyService = spotifyService;
         }
 
         public async Task<SpotSetDto> GetSetlist(string setlistId)
@@ -27,7 +26,7 @@ namespace SpotSet.Api.Services
             var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
             if (setlistModel == null) return null;
 
-            var spotifyModel = await SpotifyRequest(setlistModel);
+            var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
             var tracksDto = MapSongToTrackUri(setlistModel.Sets.Set, spotifyModel.SpotifyTracks);
             var setlistDto = new SpotSetDto
             {
@@ -38,35 +37,6 @@ namespace SpotSet.Api.Services
                 Tracks = tracksDto
             };
             return setlistDto;
-        }
-
-        public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistmodel)
-        {
-            var spotifyHttpClient = _httpFactory.CreateClient(HttpConstants.SpotifyClient);
-            var artist = setlistmodel?.Artist?.Name;
-            var spotifyTracks = new SpotifyTracksModel();
-            
-            foreach (var set in setlistmodel?.Sets?.Set)
-            {
-                foreach (var song in set.Song)
-                {
-                    var spotifyResponse = await spotifyHttpClient.GetAsync(
-                        $"search?query=artist%3A{artist}+track%3A{song.Name}&type=track&offset=0&limit=1");
-                    if (spotifyResponse.StatusCode == HttpStatusCode.OK)
-                    {
-                        var spotifyTrack = DeserializeSpotifyTracks(spotifyResponse);
-                        spotifyTracks.Add(spotifyTrack.Result);
-                    }
-                }
-            }
-            
-            return spotifyTracks;
-        }
-        
-        private static async Task<SpotifyTracks> DeserializeSpotifyTracks(HttpResponseMessage response)
-        {
-            var spotifyTracks = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<SpotifyTracks>(spotifyTracks);
         }
 
         private List<TracksDto> MapSongToTrackUri(ICollection<Set> sets, ICollection<SpotifyTracks> spotifyModel)
