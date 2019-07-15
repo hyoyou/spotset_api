@@ -2,6 +2,7 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
+using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
 using Xunit;
 
@@ -16,17 +17,24 @@ namespace SpotSet.Api.Tests.Services
                               "\"eventDate\": \"30-07-2019\", " +
                               "\"artist\": {\"name\": \"artistName\"}, " +
                               "\"venue\": {\"name\": \"venueName\"}, " +
-                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}, {\"name\": \"songTitle2\"}]}]}}";
+                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}]}]}}";
             JObject parsedSetlist = JObject.Parse(testSetlist);
+
+            var testSpotifyTracks =
+                "{\"SpotifyTracks\":[{\"Tracks\":{\"Items\":[{\"Name\":\"songTitle\",\"Uri\":\"spotify:track:uri1\"}]}}]}";
+            JObject parsedSpotifyTracks = JObject.Parse(testSpotifyTracks);
             
-            var setlistService = TestSetup.CreateSetlistFmServiceWithMocks(HttpStatusCode.OK, parsedSetlist);
-            var setlistDto = setlistService.SetlistRequest("testId");
+            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
+            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
             
-            var successSpotifyService = TestSetup.CreateSpotifyServiceWithMocks(HttpStatusCode.OK);
-            await successSpotifyService.SpotifyRequest(setlistDto.Result);
-            
-            var successSpotSetService = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.OK, parsedSetlist);
-            var result = await successSpotSetService.GetSetlist("testId");
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSpotifyTracks);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            await mockSpotifyService.SpotifyRequest(setlistDto.Result);
+
+            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
+            var result = await mockSpotSetService.GetSetlist("testId");
     
             Assert.IsType<SpotSetDto>(result);
             Assert.Equal("testId", result.Id);
@@ -38,12 +46,17 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void GetSetlistReturnsSetlistExceptionWhenSetlistFmServiceResultsInError()
         {
-            var setlistService = TestSetup.CreateSetlistFmServiceWithMocks(HttpStatusCode.NotFound);
-            await setlistService.SetlistRequest("testId");
+            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
+            await mockSetlistFmService.SetlistRequest("testId");
             
-            var spotSetService = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.NotFound);
-            
-            var ex = Assert.ThrowsAsync<SetlistNotFoundException>(() => spotSetService.GetSetlist("testId"));
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+
+            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
+            var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
+
+            var ex = Assert.ThrowsAsync<SetlistNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
             Assert.Equal("There was an error fetching the requested setlist!", ex.Result.Message);
         }
         
@@ -57,15 +70,18 @@ namespace SpotSet.Api.Tests.Services
                               "\"sets\": {\"set\": [{\"song\": []}]}}";
             JObject parsedSetlist = JObject.Parse(testSetlist);
             
-            var setlistService = TestSetup.CreateSetlistFmServiceWithMocks(HttpStatusCode.OK, parsedSetlist);
-            var setlistDto = setlistService.SetlistRequest("testId");
+            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
+            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
             
-            var spotifyService = TestSetup.CreateSpotifyServiceWithMocks(HttpStatusCode.OK);
-            await spotifyService.SpotifyRequest(setlistDto.Result);
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            await mockSpotifyService.SpotifyRequest(setlistDto.Result);
 
-            var spotSetService = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.OK, parsedSetlist);
+            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
 
-            var ex = Assert.ThrowsAsync<SpotifyNotFoundException>(() => spotSetService.GetSetlist("testId"));
+            var ex = Assert.ThrowsAsync<SpotifyNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
             Assert.Equal("There was an error fetching track details for the requested setlist!", ex.Result.Message);
         }
     }

@@ -1,7 +1,9 @@
 using System.Net;
 using Newtonsoft.Json.Linq;
 using SpotSet.Api.Exceptions;
+using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
+using SpotSet.Api.Tests.Mocks;
 using Xunit;
 
 namespace SpotSet.Api.Tests.Services
@@ -14,8 +16,11 @@ namespace SpotSet.Api.Tests.Services
             var testAccessToken = "{\"access_token\": \"testToken\"}";
             JObject parsedAccessToken = JObject.Parse(testAccessToken);
             
-            var successSpotifyAuthService = TestSetup.CreateSpotifyAuthServiceWithMocks(HttpStatusCode.OK, parsedAccessToken);
-            var result = successSpotifyAuthService.GetAccessToken();
+            var mockHttpClientFactory = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedAccessToken);
+            var mockConfiguration = new MockConfiguration();
+            var mockSpotifyAuthService = new SpotifyAuthService(mockHttpClientFactory, mockConfiguration);
+            
+            var result = mockSpotifyAuthService.GetAccessToken();
             
             Assert.Equal("testToken", result.Result);
         }
@@ -23,9 +28,11 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public void GetAccessTokenReturnsAnExceptionIfAccessTokenNotReturned()
         {
-            var spotifyAuthService = TestSetup.CreateSpotifyAuthServiceWithMocks(HttpStatusCode.NotFound);
+            var mockHttpClientFactory = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
+            var mockConfiguration = new MockConfiguration();
+            var mockSpotifyAuthService = new SpotifyAuthService(mockHttpClientFactory, mockConfiguration);
 
-            var ex = Assert.ThrowsAsync<SpotifyAuthException>(() => spotifyAuthService.GetAccessToken());
+            var ex = Assert.ThrowsAsync<SpotifyAuthException>(() => mockSpotifyAuthService.GetAccessToken());
             Assert.Equal("There was an error with authenticating the app.", ex.Result.Message);
         }
     }
