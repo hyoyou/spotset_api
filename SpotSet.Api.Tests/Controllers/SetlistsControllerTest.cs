@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using SpotSet.Api.Controllers;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
