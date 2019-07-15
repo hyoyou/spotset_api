@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,7 +25,7 @@ namespace SpotSet.Api.Services
             if (setlistModel == null) return null;
 
             var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
-            var tracksDto = MapSongToTrackUri(setlistModel.Sets.Set, spotifyModel.SpotifyTracks);
+            var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
             var setlistDto = new SpotSetDto
             {
                 Id = setlistModel.Id,
@@ -39,22 +37,19 @@ namespace SpotSet.Api.Services
             return setlistDto;
         }
 
-        private List<TracksDto> MapSongToTrackUri(ICollection<Set> sets, ICollection<SpotifyTracks> spotifyModel)
+        private List<TracksDto> MapSongToTrackUri(List<Song> tracks, ICollection<SpotifyTracks> spotifyModel)
         {
             var mappedTracks = new List<TracksDto>();
 
-            foreach (var set in sets)
+            foreach (var track in tracks)
             {
-                foreach (var song in set.Song)
+                var tracksDto = new TracksDto
                 {
-                    var tracksDto = new TracksDto
-                    {
-                        Name = song.Name,
-                        TrackUri = MatchTrackUri(song.Name, spotifyModel)
-                    };
+                    Name = track.Name,
+                    TrackUri = MatchTrackUri(track.Name, spotifyModel)
+                };
                     
-                    mappedTracks.Add(tracksDto);   
-                }
+                mappedTracks.Add(tracksDto);
             }
 
             return mappedTracks;
