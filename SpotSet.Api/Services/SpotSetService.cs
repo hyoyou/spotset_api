@@ -60,7 +60,7 @@ namespace SpotSet.Api.Services
             foreach (var track in spotifyModel)
             {
                 var items = track.Tracks?.Items;
-                if (items == null || !items.Exists(item => item.Name.ToLower().Contains(name.ToLower()))) continue;
+                if (isMatch(name, items)) continue;
                 {
                     var trackMatch = items.First(item => item.Name.ToLower().Contains(name.ToLower()));
                     return trackMatch?.Uri;
@@ -68,6 +68,11 @@ namespace SpotSet.Api.Services
             }
 
             return null;
+        }
+
+        private bool isMatch(string name, List<Item> items)
+        {
+            return items == null || !items.Exists(item => item.Name.ToLower().Contains(name.ToLower()));
         }
     }
 }
