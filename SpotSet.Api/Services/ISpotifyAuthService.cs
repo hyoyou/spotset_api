@@ -6,7 +6,5 @@ namespace SpotSet.Api.Services
     public interface ISpotifyAuthService
     {
         Task<string> GetAccessToken();
-        Task<string> GetUserAuthentication();
-        Task<SpotifyAccessToken> GetUserAuthorization(string code);
     }
 }
