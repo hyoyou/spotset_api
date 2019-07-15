@@ -8,6 +8,7 @@ using System.Web;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SpotSet.Api.Constants;
+using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
 
 namespace SpotSet.Api.Services
@@ -25,9 +26,20 @@ namespace SpotSet.Api.Services
 
         public async Task<string> GetAccessToken()
         {
-            var token = await GetAuthorization();
+            try
+            {
+                var token = await GetAuthorization();
+                if (token?.access_token == null)
+                {
+                    throw new SpotifyAuthException("There was an error with authenticating the app.");
+                }
 
-            return token.access_token;
+                return token.access_token;
+            } 
+            catch (SpotifyAuthException ex)
+            {
+                throw ex;
+            }
         }
 
         private async Task<SpotifyAccessToken> GetAuthorization()
@@ -47,9 +59,10 @@ namespace SpotSet.Api.Services
             };
 
             var requestBody = new FormUrlEncodedContent(requestData);
+
             var request = await authClient.PostAsync(HttpConstants.SpotifyAuthUri, requestBody);
             var response = await request.Content.ReadAsStringAsync();
-
+            
             return JsonConvert.DeserializeObject<SpotifyAccessToken>(response);
         }
 
