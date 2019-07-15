@@ -31,7 +31,7 @@ namespace SpotSet.Api.Services
             var setlistDto = new SpotSetDto
             {
                 Id = setlistModel.Id,
-                EventDate = FormatEventDate(setlistModel.EventDate),
+                EventDate = setlistModel.EventDate,
                 Artist = setlistModel.Artist.Name,
                 Venue = setlistModel.Venue.Name,
                 Tracks = tracksDto
@@ -73,12 +73,6 @@ namespace SpotSet.Api.Services
             }
 
             return null;
-        }
-        
-        private string FormatEventDate(string setlistModelEventDate)
-        {
-            return DateTime.ParseExact(setlistModelEventDate, "dd-MM-yyyy", CultureInfo.InvariantCulture)
-                .ToString("MM-dd-yyyy", CultureInfo.InvariantCulture);
         }
     }
 }
