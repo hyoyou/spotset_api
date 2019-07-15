@@ -16,27 +16,24 @@ namespace SpotSet.Api.Services
             _httpClientFactory = httpClientFactory;
         }
         
-        public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistmodel)
+        public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistModel)
         {
             var spotifyHttpClient = _httpClientFactory.CreateClient(HttpConstants.SpotifyClient);
-            var artist = setlistmodel?.Artist?.Name;
+            var artist = setlistModel?.Artist?.Name;
             var spotifyTracks = new SpotifyTracksModel();
             
-            foreach (var set in setlistmodel?.Sets?.Set)
+            foreach (var track in setlistModel.Tracks)
             {
-                foreach (var song in set.Song)
+                var spotifyResponse = await spotifyHttpClient.GetAsync(
+                        $"search?query=artist%3A{artist}+track%3A{track.Name}&type=track&offset=0&limit=1");
+                if (spotifyResponse.StatusCode == HttpStatusCode.OK)
                 {
-                    var spotifyResponse = await spotifyHttpClient.GetAsync(
-                        $"search?query=artist%3A{artist}+track%3A{song.Name}&type=track&offset=0&limit=1");
-                    if (spotifyResponse.StatusCode == HttpStatusCode.OK)
-                    {
-                        var spotifyTrack = DeserializeSpotifyTracks(spotifyResponse);
-                        spotifyTracks.Add(spotifyTrack.Result);
-                    }
+                    var spotifyTrack = DeserializeSpotifyTracks(spotifyResponse);
+                    spotifyTracks.Add(spotifyTrack.Result);
                 }
             }
             
-            return spotifyTracks;
+            return spotifyTracks ;
         }
         
         private static async Task<SpotifyTracks> DeserializeSpotifyTracks(HttpResponseMessage response)

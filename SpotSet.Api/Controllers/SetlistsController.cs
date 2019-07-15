@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SpotSet.Api.Services;
@@ -18,14 +19,15 @@ namespace SpotSet.Api.Controllers
         [HttpGet("{setlistId}")]
         public async Task<ActionResult> GetSetlist(string setlistId)
         {
-            var result = await _spotSetService.GetSetlist(setlistId);
-
-            if (result == null)
+            try
             {
-                return NotFound();
+                var result = await _spotSetService.GetSetlist(setlistId);
+                return Ok(result);
             }
-            
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
         }
     }
 }

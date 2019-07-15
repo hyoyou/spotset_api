@@ -5,6 +5,6 @@ namespace SpotSet.Api.Services
 {
     public interface ISpotifyService
     {
-        Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistmodel);
+        Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistModel);
     }
 }

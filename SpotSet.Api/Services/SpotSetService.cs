@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
 
 namespace SpotSet.Api.Services
@@ -21,20 +22,40 @@ namespace SpotSet.Api.Services
 
         public async Task<SpotSetDto> GetSetlist(string setlistId)
         {
-            var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
-            if (setlistModel == null) return null;
-
-            var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
-            var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
-            var setlistDto = new SpotSetDto
+            try
             {
-                Id = setlistModel.Id,
-                EventDate = setlistModel.EventDate,
-                Artist = setlistModel.Artist.Name,
-                Venue = setlistModel.Venue.Name,
-                Tracks = tracksDto
-            };
-            return setlistDto;
+                var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
+                if (setlistModel == null)
+                {
+                    throw new SetlistNotFoundException("There was an error fetching the requested setlist!");
+                }
+
+                var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
+                if (spotifyModel.SpotifyTracks.Count == 0)
+                {
+                    throw new SpotifyNotFoundException(
+                        "There was an error fetching track details for the requested setlist!");
+                }
+
+                var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
+                var setlistDto = new SpotSetDto
+                {
+                    Id = setlistModel.Id,
+                    EventDate = setlistModel.EventDate,
+                    Artist = setlistModel.Artist.Name,
+                    Venue = setlistModel.Venue.Name,
+                    Tracks = tracksDto
+                };
+                return setlistDto;
+            }
+            catch (SetlistNotFoundException ex)
+            {
+                throw ex;
+            }
+            catch (SpotifyNotFoundException ex)
+            {
+                throw ex;
+            }
         }
 
         private List<TracksDto> MapSongToTrackUri(List<Song> tracks, ICollection<SpotifyTracks> spotifyModel)

@@ -3,6 +3,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using SpotSet.Api.Controllers;
+using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
@@ -40,10 +41,10 @@ namespace SpotSet.Api.Tests.Controllers
         {
             var service = TestSetup.CreateSpotSetServiceWithMocks(HttpStatusCode.NotFound);
             var controller = CreateController(service);
-            
+
             var result = await controller.GetSetlist("invalidId");
-            
-            Assert.IsType<NotFoundResult>(result);
+
+            Assert.IsType<NotFoundObjectResult>(result);
         }
     }
 }
