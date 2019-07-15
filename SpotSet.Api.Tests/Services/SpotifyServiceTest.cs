@@ -1,5 +1,7 @@
 using System.Net;
+using Newtonsoft.Json.Linq;
 using SpotSet.Api.Models;
+using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
 using Xunit;
 
@@ -8,39 +10,66 @@ namespace SpotSet.Api.Tests.Services
     public class SpotifyServiceTest
     {
         [Fact]
-        public void GetAccessTokenReturnsASpotifyAccessTokenModelWhenCalled()
+        public async void SpotifyRequestReturnsASpotifyModelWhenCalledWithSetlistModel()
         {
-            var accessToken = new SpotifyAccessToken { access_token = "accessToken" };
+            var testSetlist = "{ \"id\": \"testId\", " +
+                              "\"eventDate\": \"30-07-2019\", " +
+                              "\"artist\": {\"name\": \"artistName\"}, " +
+                              "\"venue\": {\"name\": \"venueName\"}, " +
+                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle\"}]}]}}";
+            JObject parsedSetlist = JObject.Parse(testSetlist);
+
+            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
+            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
             
-            var successSpotifyService = TestSetup.CreateSpotifyServiceWithMocks(HttpStatusCode.OK, accessToken);
-            var result = successSpotifyService.GetAccessToken();
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            var result = await mockSpotifyService.SpotifyRequest(setlistDto.Result);
+
+            Assert.IsType<SpotifyTracksModel>(result);
+        }
+
+        [Fact]
+        public async void SpotifyRequestReturnsSpotifyTracksModelWithCorrectNumberOfTracksWhenCalledWithASetlistModel()
+        {
+            var testSetlist = "{ \"id\": \"testId\", " +
+                              "\"eventDate\": \"30-07-2019\", " +
+                              "\"artist\": {\"name\": \"artistName\"}, " +
+                              "\"venue\": {\"name\": \"venueName\"}, " +
+                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}, {\"name\": \"songTitle2\"}]}]}}";
+            JObject parsedSetlist = JObject.Parse(testSetlist);
             
-            Assert.Equal(accessToken.access_token, result.Result);
+            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
+            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
+            
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            var result = await mockSpotifyService.SpotifyRequest(setlistDto.Result);
+            
+            Assert.Equal(2, result.SpotifyTracks.Count);
         }
         
         [Fact]
-        public void GetUserAuthenticationReturnsASpotifyAuthenticationPageUrlWhenCalled()
+        public async void SpotifyRequestReturnsEmptySpotifyTracksModelWhenCalledWithAnInvalidSetlistModel()
         {
-            var accessToken = new SpotifyAccessToken { access_token = "accessToken" };
+            var testSetlist = "{ \"id\": \"testId\", " +
+                              "\"eventDate\": \"30-07-2019\", " +
+                              "\"artist\": {\"name\": \"artistName\"}, " +
+                              "\"venue\": {\"name\": \"venueName\"}, " +
+                              "\"sets\": {\"set\": [{\"song\": []}]}}";
+            JObject parsedSetlist = JObject.Parse(testSetlist);
             
-            var successSpotifyService = TestSetup.CreateSpotifyServiceWithMocks(HttpStatusCode.OK, accessToken);
-            var result = successSpotifyService.GetUserAuthentication();
-
-            var expected =
-                "https://accounts.spotify.com/authorize?client_id=SpotifyApiKey&response_type=code&redirect_uri=https%3a%2f%2flocalhost%3a5001%2fcallback&scope=playlist-modify-private+playlist-modify-public";
+            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
+            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
             
-            Assert.Equal(expected, result.Result);
-        }
-        
-        [Fact]
-        public void GetUserAuthorizationReturnsASpotifyAccessTokenWhenCalled()
-        {
-            var accessToken = new SpotifyAccessToken { access_token = "accessToken" };
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            var result = await mockSpotifyService.SpotifyRequest(setlistDto.Result);
             
-            var successSpotifyService = TestSetup.CreateSpotifyServiceWithMocks(HttpStatusCode.OK, accessToken);
-            var result = successSpotifyService.GetUserAuthorization("code");
-
-            Assert.Equal(accessToken.access_token, result.Result.access_token);
+            Assert.Equal(0, result.SpotifyTracks.Count);
         }
     }
 }

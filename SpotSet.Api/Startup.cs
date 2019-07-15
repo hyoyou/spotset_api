@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SpotSet.Api.Constants;
 using SpotSet.Api.Handlers;
-using SpotSet.Api.Services;
 
 namespace SpotSet.Api
 {
@@ -35,7 +34,8 @@ namespace SpotSet.Api
         public void ConfigureServices(IServiceCollection services)
         {
             _setlistApiKey = Configuration["SetlistApiKey"];
-            
+
+            services.RegisterServices();
             services.AddTransient<AppAuthorizationHandler>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHttpClient(HttpConstants.SetlistClient, client =>
@@ -50,9 +50,6 @@ namespace SpotSet.Api
                     client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
                 })
                 .AddHttpMessageHandler<AppAuthorizationHandler>();
-            services.AddSingleton<ISetlistService, SetlistService>();
-            services.AddSingleton<ISpotifyService, SpotifyService>();
-
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,

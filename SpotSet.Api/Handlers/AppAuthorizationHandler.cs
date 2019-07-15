@@ -10,7 +10,7 @@ namespace SpotSet.Api.Handlers
 {
     public class AppAuthorizationHandler : DelegatingHandler
     {
-        private ISpotifyService _authService;
+        private ISpotifyAuthService _authService;
         private static IHttpClientFactory _httpFactory;
         private readonly IConfiguration _configuration;
 
@@ -22,7 +22,7 @@ namespace SpotSet.Api.Handlers
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            _authService = new SpotifyService(_httpFactory, _configuration);
+            _authService = new SpotifyAuthService(_httpFactory, _configuration);
             var token = await _authService.GetAccessToken();
             request.Headers.Authorization = new AuthenticationHeaderValue(HttpConstants.Bearer, token);
 

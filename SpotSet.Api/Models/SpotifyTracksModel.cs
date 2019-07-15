@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace SpotSet.Api.Models
 {
-    public class SpotifyTracksDto
+    public class SpotifyTracksModel
     {
         private ICollection<SpotifyTracks> _spotifyTracks;
 
-        public SpotifyTracksDto()
+        public SpotifyTracksModel()
         {
             _spotifyTracks = new List<SpotifyTracks>();
         }

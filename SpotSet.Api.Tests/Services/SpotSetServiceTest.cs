@@ -1,22 +1,17 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using SpotSet.Api.Controllers;
+using SpotSet.Api.Exceptions;
+using SpotSet.Api.Models;
 using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
 using Xunit;
 
-namespace SpotSet.Api.Tests.Controllers
+namespace SpotSet.Api.Tests.Services
 {
-    public class SetlistsControllerTest
+    public class SpotSetServiceTest
     {
-        private SetlistsController CreateController(SpotSetService spotSetService)
-        {
-            return new SetlistsController(spotSetService);
-        }
-
         [Fact]
-        public async void GivenSetlistServiceReturnsASuccessResult_WhenCallingGetSetlist_ThenItReturnsAStatus200()
+        public async void GetSetlistReturnsASpotSetDtoWhenCalledWithSetlistIdThatReturnsValidData()
         {
             var testSetlist = "{ \"id\": \"testId\", " +
                               "\"eventDate\": \"30-07-2019\", " +
@@ -39,57 +34,55 @@ namespace SpotSet.Api.Tests.Controllers
 
             var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
             var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
-
-            var controller = CreateController(mockSpotSetService);
-            
-            var result = await controller.GetSetlist("testId");
-            
-            Assert.IsType<OkObjectResult>(result);
+            var result = await mockSpotSetService.GetSetlist("testId");
+    
+            Assert.IsType<SpotSetDto>(result);
+            Assert.Equal("testId", result.Id);
+            Assert.Equal("07-30-2019", result.EventDate);
+            Assert.Equal("artistName", result.Artist);
+            Assert.Equal("venueName", result.Venue);
         }
-        
+
         [Fact]
-        public async void GivenSetlistServiceReturnsAnErrorResultFromSetlistService_WhenCallingGetSetlist_ThenItReturnsAStatus404()
+        public async void GetSetlistReturnsSetlistExceptionWhenSetlistFmServiceResultsInError()
         {
             var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-
+            await mockSetlistFmService.SetlistRequest("testId");
+            
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
 
             var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
 
-            var controller = CreateController(mockSpotSetService);
-
-            var result = await controller.GetSetlist("invalidId");
-
-            Assert.IsType<NotFoundObjectResult>(result);
+            var ex = Assert.ThrowsAsync<SetlistNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
+            Assert.Equal("There was an error fetching the requested setlist!", ex.Result.Message);
         }
         
         [Fact]
-        public async void GivenSetlistServiceReturnsAnErrorResultFromSpotifyService_WhenCallingGetSetlist_ThenItReturnsAStatus404()
+        public async void GetSetlistReturnsSpotifyExceptionWhenSpotifyServiceResultsInAnEmptySpotifyTracksDto()
         {
             var testSetlist = "{ \"id\": \"testId\", " +
                               "\"eventDate\": \"30-07-2019\", " +
                               "\"artist\": {\"name\": \"artistName\"}, " +
                               "\"venue\": {\"name\": \"venueName\"}, " +
-                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}]}]}}";
+                              "\"sets\": {\"set\": [{\"song\": []}]}}";
             JObject parsedSetlist = JObject.Parse(testSetlist);
-
+            
             var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
             var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-
+            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
+            
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            await mockSpotifyService.SpotifyRequest(setlistDto.Result);
 
-            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
+            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
             var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
 
-            var controller = CreateController(mockSpotSetService);
-
-            var result = await controller.GetSetlist("invalidId");
-
-            Assert.IsType<NotFoundObjectResult>(result);
+            var ex = Assert.ThrowsAsync<SpotifyNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
+            Assert.Equal("There was an error fetching track details for the requested setlist!", ex.Result.Message);
         }
     }
 }

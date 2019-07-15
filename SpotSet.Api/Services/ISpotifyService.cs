@@ -5,8 +5,6 @@ namespace SpotSet.Api.Services
 {
     public interface ISpotifyService
     {
-        Task<string> GetAccessToken();
-        Task<string> GetUserAuthentication();
-        Task<SpotifyAccessToken> GetUserAuthorization(string code);
+        Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistModel);
     }
 }
