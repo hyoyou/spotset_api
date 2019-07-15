@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using SpotSet.Api.Formatter;
 
@@ -11,5 +12,6 @@ namespace SpotSet.Api.Models
         public Artist Artist { get; set; }
         public Venue Venue { get; set; }
         public Sets Sets { get; set; }
+        public List<Song> Tracks { get; set; }
     }
 }

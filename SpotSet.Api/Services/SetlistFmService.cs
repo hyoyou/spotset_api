@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -25,7 +26,9 @@ namespace SpotSet.Api.Services
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return await DeserializeSetlist(response);
+                var setlist = await DeserializeSetlist(response);
+                setlist.Tracks = setlist.Sets.Set.SelectMany(s => s.Song).ToList();
+                return setlist;
             }
 
             return null;
