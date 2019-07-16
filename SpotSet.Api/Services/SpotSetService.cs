@@ -27,7 +27,7 @@ namespace SpotSet.Api.Services
                 var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
                 if (setlistModel == null)
                 {
-                    throw new SetlistNotFoundException("There was an error fetching the requested setlist!");
+                    throw new SetlistNotFoundException($"No results found for setlist with an ID of {setlistId}. Please try your search again.");
                 }
 
                 var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
