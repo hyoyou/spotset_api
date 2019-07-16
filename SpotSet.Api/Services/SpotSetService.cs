@@ -31,23 +31,13 @@ namespace SpotSet.Api.Services
                 }
 
                 var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
-
                 if (spotifyModel.SpotifyTracks.Count == 0)
                 {
-                    throw new SpotifyNotFoundException(
-                        "There was an error fetching track details for the requested setlist!");
+                    throw new SpotifyNotFoundException("There was an error fetching track details for the requested setlist!");
                 }
 
                 var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
-                var setlistDto = new SpotSetDto
-                {
-                    Id = setlistModel.Id,
-                    EventDate = setlistModel.EventDate,
-                    Artist = setlistModel.Artist.Name,
-                    Venue = setlistModel.Venue.Name,
-                    Tracks = tracksDto
-                };
-                return setlistDto;
+                return CreateSpotSetDto(setlistModel, tracksDto);
             }
             catch (SetlistNotFoundException ex)
             {
@@ -95,6 +85,19 @@ namespace SpotSet.Api.Services
         private bool isMatch(string name, List<Item> items)
         {
             return items == null || !items.Exists(item => item.Name.ToLower().Contains(name.ToLower()));
+        }
+
+        private static SpotSetDto CreateSpotSetDto(SetlistDto setlistModel, List<TracksDto> tracksDto)
+        {
+            var setlistDto = new SpotSetDto
+            {
+                Id = setlistModel.Id,
+                EventDate = setlistModel.EventDate,
+                Artist = setlistModel.Artist.Name,
+                Venue = setlistModel.Venue.Name,
+                Tracks = tracksDto
+            };
+            return setlistDto;
         }
     }
 }
