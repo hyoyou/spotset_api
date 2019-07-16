@@ -17,8 +17,8 @@
 * To get an API key and secret from Spotify:
     * *Skip this step if you already have an account with Spotify
     * Sign up for an account [here](https://www.spotify.com/us/signup/)
-    * Sign to the Developer Console [here](https://developer.spotify.com/dashboard/)
-    * You should be in your Dashboard, click on the green button that says `Create a Client ID`
+    * Sign in to the Developer Console [here](https://developer.spotify.com/dashboard/)
+    * It should take you to your Dashboard. Click on the green button that says `Create a Client ID`
     
     ![Dashboard](https://spotset.s3.amazonaws.com/Screen+Shot+2019-07-16+at+5.32.10+PM.png)
     
