@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
 
@@ -33,8 +31,7 @@ namespace SpotSet.Api.Services
                 }
 
                 var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
-                string JsonResult = JsonConvert.SerializeObject(spotifyModel);
-                Console.WriteLine(JsonResult);
+
                 if (spotifyModel.SpotifyTracks.Count == 0)
                 {
                     throw new SpotifyNotFoundException(
