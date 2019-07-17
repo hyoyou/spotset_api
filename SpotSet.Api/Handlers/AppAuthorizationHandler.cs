@@ -24,7 +24,7 @@ namespace SpotSet.Api.Handlers
         {
             _authService = new SpotifyAuthService(_httpFactory, _configuration);
             var token = await _authService.GetAccessToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue(HttpConstants.Bearer, token);
+            request.Headers.Authorization = new AuthenticationHeaderValue(ApiConstants.Bearer, token);
 
             return await base.SendAsync(request, cancellationToken);
         }

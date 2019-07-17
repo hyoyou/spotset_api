@@ -33,7 +33,7 @@ namespace SpotSet.Api.Services
         
         private HttpClient CreateHttpClient()
         {
-            var httpClient = _httpClientFactory.CreateClient(HttpConstants.SetlistClient);
+            var httpClient = _httpClientFactory.CreateClient(ApiConstants.SetlistClient);
             return httpClient;
         }
 

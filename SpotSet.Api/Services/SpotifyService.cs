@@ -18,7 +18,7 @@ namespace SpotSet.Api.Services
         
         public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistModel)
         {
-            var spotifyHttpClient = _httpClientFactory.CreateClient(HttpConstants.SpotifyClient);
+            var spotifyHttpClient = _httpClientFactory.CreateClient(ApiConstants.SpotifyClient);
             var artist = setlistModel?.Artist?.Name;
             var spotifyTracks = new SpotifyTracksModel();
             
