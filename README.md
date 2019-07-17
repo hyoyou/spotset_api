@@ -7,8 +7,9 @@
 ## Setup Environment Variables
 
 * To get an API key from setlist.fm:
-    * *Skip this step if you already have an account with setlist.fm:
     * Sign up for an account [here](https://www.setlist.fm/signup)
+    ***Skip** this step if you already have an account with setlist.fm
+    
     * Once logged in, create an application [here](https://www.setlist.fm/settings/apps) and fill out the form like below
     <p align="center">
       <img width="650" src="https://spotset.s3.amazonaws.com/Screen+Shot+2019-07-16+at+5.27.14+PM.png">
@@ -19,8 +20,8 @@
     </p>
     
 * To get an API key and secret from Spotify:
-    * *Skip this step if you already have an account with Spotify
     * Sign up for an account [here](https://www.spotify.com/us/signup/)
+    ***Skip** this step if you already have an account with Spotify
     * Sign in to the Developer Console [here](https://developer.spotify.com/dashboard/)
     * It should take you to your Dashboard. Click on the green button that says `Create a Client ID`
     <p align="center">
