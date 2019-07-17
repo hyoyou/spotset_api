@@ -32,8 +32,7 @@ namespace SpotSet.Api.Tests.Services
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
             await mockSpotifyService.SpotifyRequest(setlistDto.Result);
 
-            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
-            var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
+            var mockSpotSetService = new SpotSetService(mockSetlistFmService, mockSpotifyService);
             var result = await mockSpotSetService.GetSetlist("testId");
     
             Assert.IsType<SpotSetDto>(result);
@@ -53,8 +52,7 @@ namespace SpotSet.Api.Tests.Services
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
 
-            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
-            var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
+            var mockSpotSetService = new SpotSetService(mockSetlistFmService, mockSpotifyService);
 
             var ex = Assert.ThrowsAsync<SetlistNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
             Assert.Equal("No results found for setlist with an ID of testId. Please try your search again.", ex.Result.Message);
@@ -78,8 +76,7 @@ namespace SpotSet.Api.Tests.Services
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
             await mockSpotifyService.SpotifyRequest(setlistDto.Result);
 
-            var mockHttpClientFactoryforSpotSetService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
-            var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
+            var mockSpotSetService = new SpotSetService(mockSetlistFmService, mockSpotifyService);
 
             var ex = Assert.ThrowsAsync<SpotifyNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
             Assert.Equal("There was an error fetching track details for the requested setlist!", ex.Result.Message);

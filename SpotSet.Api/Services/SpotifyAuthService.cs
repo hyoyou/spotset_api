@@ -31,7 +31,7 @@ namespace SpotSet.Api.Services
                 var token = await TokenRequest();
                 if (token?.access_token == null)
                 {
-                    throw new SpotifyAuthException("There was an error with authenticating the app.");
+                    throw new SpotifyAuthException("There was an error authenticating the app.");
                 }
 
                 return token.access_token;
@@ -79,7 +79,6 @@ namespace SpotSet.Api.Services
         private static async Task<SpotifyAccessToken> ProcessResponse(HttpResponseMessage request)
         {
             var response = await request.Content.ReadAsStringAsync();
-
             return JsonConvert.DeserializeObject<SpotifyAccessToken>(response);
         }
     }

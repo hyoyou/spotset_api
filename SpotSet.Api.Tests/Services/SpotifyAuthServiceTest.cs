@@ -11,7 +11,7 @@ namespace SpotSet.Api.Tests.Services
     public class SpotifyAuthServiceTest
     {
         [Fact]
-        public void GetAccessTokenReturnsASpotifyAccessTokenModelWhenCalled()
+        public void GetAccessTokenReturnsASpotifyAccessTokenStringWhenRequestIsSuccess()
         {
             var testAccessToken = "{\"access_token\": \"testToken\"}";
             JObject parsedAccessToken = JObject.Parse(testAccessToken);
@@ -33,7 +33,7 @@ namespace SpotSet.Api.Tests.Services
             var mockSpotifyAuthService = new SpotifyAuthService(mockHttpClientFactory, mockConfiguration);
 
             var ex = Assert.ThrowsAsync<SpotifyAuthException>(() => mockSpotifyAuthService.GetAccessToken());
-            Assert.Equal("There was an error with authenticating the app.", ex.Result.Message);
+            Assert.Equal("There was an error authenticating the app.", ex.Result.Message);
         }
     }
 }

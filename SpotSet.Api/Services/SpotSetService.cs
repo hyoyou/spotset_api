@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
@@ -9,13 +8,11 @@ namespace SpotSet.Api.Services
 {
     public class SpotSetService : ISpotSetService
     {
-        private static IHttpClientFactory _httpClientFactory;
         private static ISetlistFmService _setlistFmService;
         private static ISpotifyService _spotifyService;
 
-        public SpotSetService(IHttpClientFactory httpClientFactory, ISetlistFmService setlistFmService, ISpotifyService spotifyService)
+        public SpotSetService(ISetlistFmService setlistFmService, ISpotifyService spotifyService)
         {
-            _httpClientFactory = httpClientFactory;
             _setlistFmService = setlistFmService;
             _spotifyService = spotifyService;
         }

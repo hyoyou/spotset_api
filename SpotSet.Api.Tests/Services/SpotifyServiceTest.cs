@@ -10,7 +10,7 @@ namespace SpotSet.Api.Tests.Services
     public class SpotifyServiceTest
     {
         [Fact]
-        public async void SpotifyRequestReturnsASpotifyModelWhenCalledWithSetlistModel()
+        public async void SpotifyRequestReturnsASpotifyModelWhenCalledWithValidSetlistModel()
         {
             var testSetlist = "{ \"id\": \"testId\", " +
                               "\"eventDate\": \"30-07-2019\", " +
