@@ -39,7 +39,7 @@ namespace SpotSet.Api.Services
 
         private static async Task<HttpResponseMessage> SendRequest(string setlistId, HttpClient httpClient)
         {
-            var uri = $"setlist/{setlistId}";
+            var uri = ApiConstants.SetlistSearchUri + setlistId;
             HttpResponseMessage response = await httpClient.GetAsync(uri);
             return response;
         }

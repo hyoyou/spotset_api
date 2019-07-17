@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using SpotSet.Api.Constants;
 using SpotSet.Api.Controllers;
 using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
@@ -80,7 +81,8 @@ namespace SpotSet.Api.Tests.Controllers
             var result = await controller.GetSetlist("invalidId");
             
             var error = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Contains("No results found for setlist with an ID of invalidId. Please try your search again.", error.Value.ToString());
+            var expected = ErrorConstants.SetlistError + "invalidId" + ErrorConstants.SetlistErrorTryAgain;
+            Assert.Contains(expected, error.Value.ToString());
         }
         
         [Fact]
@@ -131,7 +133,7 @@ namespace SpotSet.Api.Tests.Controllers
             var result = await controller.GetSetlist("invalidId");
             
             var error = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Contains("There was an error fetching track details for the requested setlist!", error.Value.ToString());
+            Assert.Contains(ErrorConstants.SpotifyError, error.Value.ToString());
         }
     }
 }

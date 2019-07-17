@@ -31,7 +31,7 @@ namespace SpotSet.Api.Services
                 var token = await TokenRequest();
                 if (token?.access_token == null)
                 {
-                    throw new SpotifyAuthException("There was an error authenticating the app.");
+                    throw new SpotifyAuthException(ErrorConstants.SpotifyAuthError);
                 }
 
                 return token.access_token;
@@ -51,8 +51,8 @@ namespace SpotSet.Api.Services
 
         private HttpClient CreateRequest(out FormUrlEncodedContent requestBody)
         {
-            var apiKey = _configuration["SpotifyApiKey"];
-            var apiSecret = _configuration["SpotifyApiSecret"];
+            var apiKey = _configuration[ApiConstants.SpotifyApiKey];
+            var apiSecret = _configuration[ApiConstants.SpotifyApiSecret];
             string credentials = $"{apiKey}:{apiSecret}";
 
             var authClient = _httpFactory.CreateClient();
