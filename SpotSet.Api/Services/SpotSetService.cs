@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
 
@@ -29,28 +27,17 @@ namespace SpotSet.Api.Services
                 var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
                 if (setlistModel == null)
                 {
-                    throw new SetlistNotFoundException("There was an error fetching the requested setlist!");
+                    throw new SetlistNotFoundException($"No results found for setlist with an ID of {setlistId}. Please try your search again.");
                 }
 
                 var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
-                string JsonResult = JsonConvert.SerializeObject(spotifyModel);
-                Console.WriteLine(JsonResult);
                 if (spotifyModel.SpotifyTracks.Count == 0)
                 {
-                    throw new SpotifyNotFoundException(
-                        "There was an error fetching track details for the requested setlist!");
+                    throw new SpotifyNotFoundException("There was an error fetching track details for the requested setlist!");
                 }
 
                 var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
-                var setlistDto = new SpotSetDto
-                {
-                    Id = setlistModel.Id,
-                    EventDate = setlistModel.EventDate,
-                    Artist = setlistModel.Artist.Name,
-                    Venue = setlistModel.Venue.Name,
-                    Tracks = tracksDto
-                };
-                return setlistDto;
+                return CreateSpotSetDto(setlistModel, tracksDto);
             }
             catch (SetlistNotFoundException ex)
             {
@@ -98,6 +85,19 @@ namespace SpotSet.Api.Services
         private bool isMatch(string name, List<Item> items)
         {
             return items == null || !items.Exists(item => item.Name.ToLower().Contains(name.ToLower()));
+        }
+
+        private static SpotSetDto CreateSpotSetDto(SetlistDto setlistModel, List<TracksDto> tracksDto)
+        {
+            var setlistDto = new SpotSetDto
+            {
+                Id = setlistModel.Id,
+                EventDate = setlistModel.EventDate,
+                Artist = setlistModel.Artist.Name,
+                Venue = setlistModel.Venue.Name,
+                Tracks = tracksDto
+            };
+            return setlistDto;
         }
     }
 }

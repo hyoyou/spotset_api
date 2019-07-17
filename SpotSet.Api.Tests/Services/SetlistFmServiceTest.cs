@@ -102,5 +102,63 @@ namespace SpotSet.Api.Tests.Services
 
             Assert.Null(result);
         }
+        
+        [Fact]
+        public async void SetlistDtoIsReturnedWithTracksFieldPopulatedWithOneTrackAfterDeserialization()
+        {
+            var testSetlist = "{ \"id\": \"testId\", " +
+                              "\"eventDate\": \"03-07-2019\", " +
+                              "\"artist\": {\"name\": \"artistName\"}, " +
+                              "\"venue\": {\"name\": \"venueName\"}, " +
+                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle\"}]}]}}";
+            JObject parsedSetlist = JObject.Parse(testSetlist);
+            
+            var mockHttpClientFactory = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactory);
+            
+            var result = await mockSetlistFmService.SetlistRequest("testId");
+
+            Assert.Single(result.Tracks);
+            Assert.Equal("songTitle", result.Tracks[0].Name);
+        }
+        
+        [Fact]
+        public async void SetlistDtoIsReturnedWithTracksFieldPopulatedWithManyTrackAfterDeserialization()
+        {
+            var testSetlist = "{ \"id\": \"testId\", " +
+                              "\"eventDate\": \"03-07-2019\", " +
+                              "\"artist\": {\"name\": \"artistName\"}, " +
+                              "\"venue\": {\"name\": \"venueName\"}, " +
+                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}]}, {\"song\": [{\"name\": \"songTitle2\"}]}, {\"song\": [{\"name\": \"songTitle3\"}]}]}}";
+            JObject parsedSetlist = JObject.Parse(testSetlist);
+            
+            var mockHttpClientFactory = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactory);
+            
+            var result = await mockSetlistFmService.SetlistRequest("testId");
+
+            Assert.Equal(3, result.Tracks.Count);
+            Assert.Equal("songTitle1", result.Tracks[0].Name);
+            Assert.Equal("songTitle2", result.Tracks[1].Name);
+            Assert.Equal("songTitle3", result.Tracks[2].Name);
+        }
+        
+        [Fact]
+        public async void SetlistDtoIsReturnedWithTracksFieldEmptyAfterDeserialization()
+        {
+            var testSetlist = "{ \"id\": \"testId\", " +
+                              "\"eventDate\": \"03-07-2019\", " +
+                              "\"artist\": {\"name\": \"artistName\"}, " +
+                              "\"venue\": {\"name\": \"venueName\"}, " +
+                              "\"sets\": {\"set\": [{\"song\": []}]}}";
+            JObject parsedSetlist = JObject.Parse(testSetlist);
+            
+            var mockHttpClientFactory = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
+            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactory);
+            
+            var result = await mockSetlistFmService.SetlistRequest("testId");
+
+            Assert.Empty(result.Tracks);
+        }
     }
 }

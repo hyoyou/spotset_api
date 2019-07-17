@@ -19,25 +19,41 @@ namespace SpotSet.Api.Services
         
         public async Task<SetlistDto> SetlistRequest(string setlistId)
         {
-            var uri = $"setlist/{setlistId}";
-            
-            var httpClient = _httpClientFactory.CreateClient(HttpConstants.SetlistClient);
-            HttpResponseMessage response = await httpClient.GetAsync(uri);
+            var httpClient = CreateHttpClient();
+            var response = await SendRequest(setlistId, httpClient);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var setlist = await DeserializeSetlist(response);
-                setlist.Tracks = setlist.Sets.Set.SelectMany(s => s.Song).ToList();
-                return setlist;
+                return AddTracksField(setlist);
             }
 
             return null;
         }
         
+        private HttpClient CreateHttpClient()
+        {
+            var httpClient = _httpClientFactory.CreateClient(HttpConstants.SetlistClient);
+            return httpClient;
+        }
+
+        private static async Task<HttpResponseMessage> SendRequest(string setlistId, HttpClient httpClient)
+        {
+            var uri = $"setlist/{setlistId}";
+            HttpResponseMessage response = await httpClient.GetAsync(uri);
+            return response;
+        }
+
         private static async Task<SetlistDto> DeserializeSetlist(HttpResponseMessage response)
         {
             var setlist = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<SetlistDto>(setlist);
+        }
+        
+        private static SetlistDto AddTracksField(SetlistDto setlist)
+        {
+            setlist.Tracks = setlist.Sets.Set.SelectMany(s => s.Song).ToList();
+            return setlist;
         }
     }
 }

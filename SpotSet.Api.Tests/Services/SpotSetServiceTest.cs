@@ -57,7 +57,7 @@ namespace SpotSet.Api.Tests.Services
             var mockSpotSetService = new SpotSetService(mockHttpClientFactoryforSpotSetService, mockSetlistFmService, mockSpotifyService);
 
             var ex = Assert.ThrowsAsync<SetlistNotFoundException>(() => mockSpotSetService.GetSetlist("testId"));
-            Assert.Equal("There was an error fetching the requested setlist!", ex.Result.Message);
+            Assert.Equal("No results found for setlist with an ID of testId. Please try your search again.", ex.Result.Message);
         }
         
         [Fact]
