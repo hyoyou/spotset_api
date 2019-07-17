@@ -1,16 +1,22 @@
 namespace SpotSet.Api.Constants
 {
-    public class HttpConstants
+    public class ApiConstants
     {
         public const string SetlistClient = "GetSetlistClient";
         public const string SpotifyClient = "GetSpotifyClient";
+
+        public const string SpotifyApiKey = "SpotifyApiKey";
+        public const string SpotifyApiSecret = "SpotifyApiSecret";
+        
         public const string SetlistUri = "https://api.setlist.fm/rest/1.0/";
+        public const string SetlistSearchUri = "setlist/";
         public const string SpotifyAuthUri = "https://accounts.spotify.com/api/token";
-        public const string SpotifyUserAuthUri = "https://accounts.spotify.com/authorize";
-        public const string SpotifyRedirectUri = "https://localhost:5001/callback";
         public const string SpotifyUri = "https://api.spotify.com/v1/";
-        public const string SpotifyUserScopes = "playlist-modify-private playlist-modify-public";
+        public const string SpotifyQueryArtist = "search?query=artist%3A";
+        public const string SpotifyQueryTrack = "+track%3A";
+        public const string SpotifyQueryOptions = "&type=track&offset=0&limit=1";
         public const string ClientUrlLocal = "http://localhost:3000";
+        
         public const string XApiKey = "x-api-key";
         public const string Basic = "Basic";
         public const string Bearer = "Bearer";

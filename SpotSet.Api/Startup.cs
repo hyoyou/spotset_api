@@ -38,16 +38,16 @@ namespace SpotSet.Api
             services.RegisterServices();
             services.AddTransient<AppAuthorizationHandler>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddHttpClient(HttpConstants.SetlistClient, client =>
+            services.AddHttpClient(ApiConstants.SetlistClient, client =>
             {
-                client.BaseAddress = new Uri(HttpConstants.SetlistUri);
-                client.DefaultRequestHeaders.Add(HttpConstants.XApiKey, _setlistApiKey);
-                client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
+                client.BaseAddress = new Uri(ApiConstants.SetlistUri);
+                client.DefaultRequestHeaders.Add(ApiConstants.XApiKey, _setlistApiKey);
+                client.DefaultRequestHeaders.Add(ApiConstants.ContentType, ApiConstants.AppJson);
             });
-            services.AddHttpClient(HttpConstants.SpotifyClient, client =>
+            services.AddHttpClient(ApiConstants.SpotifyClient, client =>
                 {
-                    client.BaseAddress = new Uri(HttpConstants.SpotifyUri);
-                    client.DefaultRequestHeaders.Add(HttpConstants.ContentType, HttpConstants.AppJson);
+                    client.BaseAddress = new Uri(ApiConstants.SpotifyUri);
+                    client.DefaultRequestHeaders.Add(ApiConstants.ContentType, ApiConstants.AppJson);
                 })
                 .AddHttpMessageHandler<AppAuthorizationHandler>();
             services.AddCors(options =>
@@ -55,7 +55,7 @@ namespace SpotSet.Api
                 options.AddPolicy(MyAllowSpecificOrigins,
                     builder =>
                     {
-                        builder.WithOrigins(HttpConstants.ClientUrlLocal);
+                        builder.WithOrigins(ApiConstants.ClientUrlLocal);
                     });
             });
         }

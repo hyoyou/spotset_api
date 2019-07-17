@@ -33,13 +33,13 @@ namespace SpotSet.Api.Services
         
         private HttpClient CreateHttpClient()
         {
-            var httpClient = _httpClientFactory.CreateClient(HttpConstants.SetlistClient);
+            var httpClient = _httpClientFactory.CreateClient(ApiConstants.SetlistClient);
             return httpClient;
         }
 
         private static async Task<HttpResponseMessage> SendRequest(string setlistId, HttpClient httpClient)
         {
-            var uri = $"setlist/{setlistId}";
+            var uri = ApiConstants.SetlistSearchUri + setlistId;
             HttpResponseMessage response = await httpClient.GetAsync(uri);
             return response;
         }

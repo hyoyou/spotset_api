@@ -18,14 +18,15 @@ namespace SpotSet.Api.Services
         
         public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistModel)
         {
-            var spotifyHttpClient = _httpClientFactory.CreateClient(HttpConstants.SpotifyClient);
+            var spotifyHttpClient = _httpClientFactory.CreateClient(ApiConstants.SpotifyClient);
             var artist = setlistModel?.Artist?.Name;
             var spotifyTracks = new SpotifyTracksModel();
             
             foreach (var track in setlistModel.Tracks)
             {
-                var spotifyResponse = await spotifyHttpClient.GetAsync(
-                        $"search?query=artist%3A{artist}+track%3A{track.Name}&type=track&offset=0&limit=1");
+                var url = ApiConstants.SpotifyQueryArtist + artist + ApiConstants.SpotifyQueryTrack + track.Name +
+                          ApiConstants.SpotifyQueryOptions;
+                var spotifyResponse = await spotifyHttpClient.GetAsync(url);
                 if (spotifyResponse.StatusCode == HttpStatusCode.OK)
                 {
                     var spotifyTrack = DeserializeSpotifyTracks(spotifyResponse);

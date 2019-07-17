@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
+using SpotSet.Api.Constants;
 using SpotSet.Api.Exceptions;
 using SpotSet.Api.Models;
 
@@ -9,13 +9,11 @@ namespace SpotSet.Api.Services
 {
     public class SpotSetService : ISpotSetService
     {
-        private static IHttpClientFactory _httpClientFactory;
         private static ISetlistFmService _setlistFmService;
         private static ISpotifyService _spotifyService;
 
-        public SpotSetService(IHttpClientFactory httpClientFactory, ISetlistFmService setlistFmService, ISpotifyService spotifyService)
+        public SpotSetService(ISetlistFmService setlistFmService, ISpotifyService spotifyService)
         {
-            _httpClientFactory = httpClientFactory;
             _setlistFmService = setlistFmService;
             _spotifyService = spotifyService;
         }
@@ -27,13 +25,14 @@ namespace SpotSet.Api.Services
                 var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
                 if (setlistModel == null)
                 {
-                    throw new SetlistNotFoundException($"No results found for setlist with an ID of {setlistId}. Please try your search again.");
+                    var errorMessage = ErrorConstants.SetlistError + setlistId + ErrorConstants.SetlistErrorTryAgain;
+                    throw new SetlistNotFoundException(errorMessage);
                 }
 
                 var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
                 if (spotifyModel.SpotifyTracks.Count == 0)
                 {
-                    throw new SpotifyNotFoundException("There was an error fetching track details for the requested setlist!");
+                    throw new SpotifyNotFoundException(ErrorConstants.SpotifyError);
                 }
 
                 var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);

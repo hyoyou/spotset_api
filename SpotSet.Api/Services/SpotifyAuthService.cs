@@ -31,7 +31,7 @@ namespace SpotSet.Api.Services
                 var token = await TokenRequest();
                 if (token?.access_token == null)
                 {
-                    throw new SpotifyAuthException("There was an error with authenticating the app.");
+                    throw new SpotifyAuthException(ErrorConstants.SpotifyAuthError);
                 }
 
                 return token.access_token;
@@ -51,19 +51,19 @@ namespace SpotSet.Api.Services
 
         private HttpClient CreateRequest(out FormUrlEncodedContent requestBody)
         {
-            var apiKey = _configuration["SpotifyApiKey"];
-            var apiSecret = _configuration["SpotifyApiSecret"];
+            var apiKey = _configuration[ApiConstants.SpotifyApiKey];
+            var apiSecret = _configuration[ApiConstants.SpotifyApiSecret];
             string credentials = $"{apiKey}:{apiSecret}";
 
             var authClient = _httpFactory.CreateClient();
             authClient.DefaultRequestHeaders.Accept.Clear();
-            authClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(HttpConstants.AppJson));
-            authClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(HttpConstants.Basic,
+            authClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(ApiConstants.AppJson));
+            authClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(ApiConstants.Basic,
                 Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials)));
 
             var requestData = new List<KeyValuePair<string, string>>
             {
-                new KeyValuePair<string, string>(HttpConstants.GrantType, HttpConstants.ClientCred)
+                new KeyValuePair<string, string>(ApiConstants.GrantType, ApiConstants.ClientCred)
             };
 
             requestBody = new FormUrlEncodedContent(requestData);
@@ -72,14 +72,13 @@ namespace SpotSet.Api.Services
 
         private static async Task<HttpResponseMessage> SendRequest(HttpClient authClient, FormUrlEncodedContent requestBody)
         {
-            var request = await authClient.PostAsync(HttpConstants.SpotifyAuthUri, requestBody);
+            var request = await authClient.PostAsync(ApiConstants.SpotifyAuthUri, requestBody);
             return request;
         }
 
         private static async Task<SpotifyAccessToken> ProcessResponse(HttpResponseMessage request)
         {
             var response = await request.Content.ReadAsStringAsync();
-
             return JsonConvert.DeserializeObject<SpotifyAccessToken>(response);
         }
     }
