@@ -1,11 +1,10 @@
 # SpotSet API [![TravisCI](https://travis-ci.com/hyoyou/spotset_api.svg?branch=master)]
 
 ## Prerequisites
-* C# (Helpful to use an IDE like [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) - Free, [Visual Studio for Windows](https://visualstudio.microsoft.com/vs/) - Free, [JetBrains Rider](https://www.jetbrains.com/rider/) - Paid)
+* C# (Convenient to use an IDE like [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) - Free, [Visual Studio for Windows](https://visualstudio.microsoft.com/vs/) - Free, [JetBrains Rider](https://www.jetbrains.com/rider/) - Paid)
 * .NET Core 2.2 (Download SDK from [Here](https://dotnet.microsoft.com/download))
 
 ## Setup Environment Variables
-
 * To get an API key from setlist.fm:
     * Sign up for an account [here](https://www.setlist.fm/signup)
     ***Skip** this step if you already have an account with setlist.fm
@@ -54,9 +53,10 @@
     <p align="center">
       <img width="300" src="https://spotset.s3.amazonaws.com/Screen+Shot+2019-07-16+at+5.36.25+PM.png">
     </p>
-
+   
+* Clone this repo and `cd` into the project directory
 * To save these variables to your environment:
-    * Navigate to the project directory in your terminal, then run these commands to save each variable:
+    * Navigate to the project directory in your terminal (ie. If you're inside the root level `SpotSet.Api` directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
     
    ```
    $ dotnet user-secrets set “SetlistApiKey" “<Your setlist.fm API Key>“
@@ -64,9 +64,7 @@
    $ dotnet user-secrets set “SpotifyApiSecret” “<Your Spotify Client Secret>“
    ```
    
-
 ## Setup
-* Clone this repo and `cd SpotSet.Api` once more into the project directory
 * Use IDE to build and run, or to install dependencies, compile, and run on the command line, use following command:
 
 ```
