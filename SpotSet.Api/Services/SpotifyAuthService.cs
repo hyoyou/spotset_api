@@ -26,20 +26,13 @@ namespace SpotSet.Api.Services
 
         public async Task<string> GetAccessToken()
         {
-            try
+            var token = await TokenRequest();
+            if (token?.access_token == null)
             {
-                var token = await TokenRequest();
-                if (token?.access_token == null)
-                {
-                    throw new SpotifyAuthException(ErrorConstants.SpotifyAuthError);
-                }
-
-                return token.access_token;
-            } 
-            catch (SpotifyAuthException ex)
-            {
-                throw ex;
+                throw new SpotifyAuthException(ErrorConstants.SpotifyAuthError);
             }
+
+            return token.access_token;
         }
 
         private async Task<SpotifyAccessToken> TokenRequest()
@@ -51,23 +44,33 @@ namespace SpotSet.Api.Services
 
         private HttpClient CreateRequest(out FormUrlEncodedContent requestBody)
         {
+            var authClient = _httpFactory.CreateClient();
+            AddHeaders(authClient);
+            AddBody(out requestBody);
+            
+            return authClient;
+        }
+
+        public void AddHeaders(HttpClient authClient)
+        {
             var apiKey = _configuration[ApiConstants.SpotifyApiKey];
             var apiSecret = _configuration[ApiConstants.SpotifyApiSecret];
             string credentials = $"{apiKey}:{apiSecret}";
-
-            var authClient = _httpFactory.CreateClient();
+            
             authClient.DefaultRequestHeaders.Accept.Clear();
             authClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(ApiConstants.AppJson));
             authClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(ApiConstants.Basic,
                 Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials)));
+        }
 
+        private void AddBody(out FormUrlEncodedContent requestBody)
+        {
             var requestData = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>(ApiConstants.GrantType, ApiConstants.ClientCred)
             };
 
             requestBody = new FormUrlEncodedContent(requestData);
-            return authClient;
         }
 
         private static async Task<HttpResponseMessage> SendRequest(HttpClient authClient, FormUrlEncodedContent requestBody)

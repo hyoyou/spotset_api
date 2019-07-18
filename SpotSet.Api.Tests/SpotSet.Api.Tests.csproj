@@ -19,8 +19,4 @@
       <ProjectReference Include="..\SpotSet.Api\SpotSet.Api.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Models" />
-    </ItemGroup>
-
 </Project>

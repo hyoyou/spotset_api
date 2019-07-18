@@ -5,15 +5,15 @@ namespace SpotSet.Api.Tests.Mocks
 {
     public class MockHttpClientFactory : IHttpClientFactory
     {
-        public HttpClient HttpClient;
+        private HttpClient _httpClient;
         public MockHttpClientFactory(HttpClient httpClient)
         {
-            HttpClient = httpClient;
-            HttpClient.BaseAddress = new Uri("https://test.com");
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://test.com");
         }
         public HttpClient CreateClient(string name)
         {
-            return HttpClient;
+            return _httpClient;
         }
     }
 }
