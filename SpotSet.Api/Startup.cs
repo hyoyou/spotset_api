@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SpotSet.Api.Constants;
-using SpotSet.Api.Handlers;
 
 namespace SpotSet.Api
 {
@@ -36,20 +35,13 @@ namespace SpotSet.Api
             _setlistApiKey = Configuration[ApiConstants.SetlistApiKey];
 
             services.RegisterServices();
-            services.AddTransient<AppAuthorizationHandler>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.RegisterHttpServices();
             services.AddHttpClient(ApiConstants.SetlistClient, client =>
             {
                 client.BaseAddress = new Uri(ApiConstants.SetlistUri);
                 client.DefaultRequestHeaders.Add(ApiConstants.XApiKey, _setlistApiKey);
                 client.DefaultRequestHeaders.Add(ApiConstants.ContentType, ApiConstants.AppJson);
             });
-            services.AddHttpClient(ApiConstants.SpotifyClient, client =>
-                {
-                    client.BaseAddress = new Uri(ApiConstants.SpotifyUri);
-                    client.DefaultRequestHeaders.Add(ApiConstants.ContentType, ApiConstants.AppJson);
-                })
-                .AddHttpMessageHandler<AppAuthorizationHandler>();
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -58,6 +50,7 @@ namespace SpotSet.Api
                         builder.WithOrigins(ApiConstants.ClientUrlLocal);
                     });
             });
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
