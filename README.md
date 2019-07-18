@@ -67,14 +67,16 @@
    * You could check that the keys have been saved properly by running `dotnet user-secrets list`
    
 ## Setup
-* Use IDE to build and run, or to install dependencies, compile, and run on the command line, use following command:
+* To start the app:
 
 ```
-$ dotnet run
+$ dotnet run --project SpotSet.Api
 ```
+
+Press `ctrl + c` to stop.
 
 ## Running the Tests
-* To run unit tests, you can run them from your chosen IDE or the following command:
+* To run unit tests:
 
 ```
 $ dotnet test
