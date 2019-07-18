@@ -1,8 +1,8 @@
-# SpotSet API [![TravisCI](https://travis-ci.com/hyoyou/spotset_api.svg?branch=master)]
+# SpotSet API [![Build Status](https://travis-ci.com/hyoyou/spotset_api.svg?branch=master)](https://travis-ci.com/hyoyou/spotset_api)
 
 ## Prerequisites
-* C# (Convenient to use an IDE like [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) - Free, [Visual Studio for Windows](https://visualstudio.microsoft.com/vs/) - Free, [JetBrains Rider](https://www.jetbrains.com/rider/) - Paid)
 * .NET Core 2.2 (Download SDK from [Here](https://dotnet.microsoft.com/download))
+* For C#: Not required, but convenient to use an IDE like [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) - Free, [Visual Studio for Windows](https://visualstudio.microsoft.com/vs/) - Free, [JetBrains Rider](https://www.jetbrains.com/rider/) - Paid
 
 ## Setup Environment Variables
 * To get an API key from setlist.fm:
