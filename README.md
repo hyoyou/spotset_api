@@ -56,13 +56,15 @@
    
 * Clone this repo and `cd` into the project directory
 * To save these variables to your environment:
-    * Navigate to the project directory in your terminal (ie. If you're inside the root level `SpotSet.Api` directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
+    * Navigate to the project directory (the one housing the .csproj file) in your terminal (ie. If you're inside the root level `SpotSet.Api` directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
     
    ```
-   $ dotnet user-secrets set “SetlistApiKey" “<Your setlist.fm API Key>“
-   $ dotnet user-secrets set “SpotifyApiKey" “<Your Spotify Client ID>“
-   $ dotnet user-secrets set “SpotifyApiSecret” “<Your Spotify Client Secret>“
+   $ dotnet user-secrets set "SetlistApiKey" "<Your setlist.fm API Key>"
+   $ dotnet user-secrets set "SpotifyApiKey" "<Your Spotify Client ID>"
+   $ dotnet user-secrets set "SpotifyApiSecret" "<Your Spotify Client Secret>"
    ```
+   
+   * You could check that the keys have been saved properly by running `dotnet user-secrets list`
    
 ## Setup
 * Use IDE to build and run, or to install dependencies, compile, and run on the command line, use following command:
