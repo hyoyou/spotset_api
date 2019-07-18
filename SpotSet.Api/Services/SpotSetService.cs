@@ -20,32 +20,21 @@ namespace SpotSet.Api.Services
 
         public async Task<SpotSetDto> GetSetlist(string setlistId)
         {
-            try
+            var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
+            if (setlistModel == null)
             {
-                var setlistModel = await _setlistFmService.SetlistRequest(setlistId);
-                if (setlistModel == null)
-                {
-                    var errorMessage = ErrorConstants.SetlistError + setlistId + ErrorConstants.SetlistErrorTryAgain;
-                    throw new SetlistNotFoundException(errorMessage);
-                }
+                var errorMessage = ErrorConstants.SetlistError + setlistId + ErrorConstants.SetlistErrorTryAgain;
+                throw new SetlistNotFoundException(errorMessage);
+            }
 
-                var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
-                if (spotifyModel.SpotifyTracks.Count == 0)
-                {
-                    throw new SpotifyNotFoundException(ErrorConstants.SpotifyError);
-                }
+            var spotifyModel = await _spotifyService.SpotifyRequest(setlistModel);
+            if (spotifyModel.SpotifyTracks.Count == 0)
+            {
+                throw new SpotifyNotFoundException(ErrorConstants.SpotifyError);
+            }
 
-                var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
-                return CreateSpotSetDto(setlistModel, tracksDto);
-            }
-            catch (SetlistNotFoundException ex)
-            {
-                throw ex;
-            }
-            catch (SpotifyNotFoundException ex)
-            {
-                throw ex;
-            }
+            var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
+            return CreateSpotSetDto(setlistModel, tracksDto);
         }
 
         private List<TracksDto> MapSongToTrackUri(List<Song> tracks, ICollection<SpotifyTracks> spotifyModel)
