@@ -1,8 +1,8 @@
-# SpotSet API [![TravisCI](https://travis-ci.com/hyoyou/spotset_api.svg?branch=master)]
+# SpotSet API [![Build Status](https://travis-ci.com/hyoyou/spotset_api.svg?branch=master)](https://travis-ci.com/hyoyou/spotset_api)
 
 ## Prerequisites
-* C# (Convenient to use an IDE like [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) - Free, [Visual Studio for Windows](https://visualstudio.microsoft.com/vs/) - Free, [JetBrains Rider](https://www.jetbrains.com/rider/) - Paid)
 * .NET Core 2.2 (Download SDK from [Here](https://dotnet.microsoft.com/download))
+* For C#: Not required, but convenient to use an IDE like [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) - Free, [Visual Studio for Windows](https://visualstudio.microsoft.com/vs/) - Free, [JetBrains Rider](https://www.jetbrains.com/rider/) - Paid
 
 ## Setup Environment Variables
 * To get an API key from setlist.fm:
@@ -56,7 +56,7 @@
    
 * Clone this repo and `cd` into the project directory
 * To save these variables to your environment:
-    * Navigate to the project directory (the one housing the .csproj file) in your terminal (ie. If you're inside the root level `SpotSet.Api` directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
+    * Navigate to the project directory (the one housing the .csproj file) in your terminal (ie. If you're inside the root level `SpotSet.Api` solution directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
     
    ```
    $ dotnet user-secrets set "SetlistApiKey" "<Your setlist.fm API Key>"
@@ -67,14 +67,18 @@
    * You could check that the keys have been saved properly by running `dotnet user-secrets list`
    
 ## Setup
-* Use IDE to build and run, or to install dependencies, compile, and run on the command line, use following command:
+* Switch directory with `cd ..` back into the solution directory
+
+* To start the app:
 
 ```
-$ dotnet run
+$ dotnet run --project SpotSet.Api
 ```
+
+Press `ctrl + c` to stop.
 
 ## Running the Tests
-* To run unit tests, you can run them from your chosen IDE or the following command:
+* To run unit tests:
 
 ```
 $ dotnet test

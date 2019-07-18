@@ -18,7 +18,7 @@ namespace SpotSet.Api.Tests.Services
                               "\"eventDate\": \"30-07-2019\", " +
                               "\"artist\": {\"name\": \"artistName\"}, " +
                               "\"venue\": {\"name\": \"venueName\"}, " +
-                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}]}]}}";
+                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle\"}]}]}}";
             JObject parsedSetlist = JObject.Parse(testSetlist);
 
             var testSpotifyTracks =
@@ -27,11 +27,9 @@ namespace SpotSet.Api.Tests.Services
             
             var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
             var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
             
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSpotifyTracks);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
-            await mockSpotifyService.SpotifyRequest(setlistDto.Result);
 
             var mockSpotSetService = new SpotSetService(mockSetlistFmService, mockSpotifyService);
             var result = await mockSpotSetService.GetSetlist("testId");
@@ -41,6 +39,7 @@ namespace SpotSet.Api.Tests.Services
             Assert.Equal("07-30-2019", result.EventDate);
             Assert.Equal("artistName", result.Artist);
             Assert.Equal("venueName", result.Venue);
+            Assert.Equal("songTitle", result.Tracks[0].Name);
         }
 
         [Fact]
@@ -62,7 +61,7 @@ namespace SpotSet.Api.Tests.Services
         }
         
         [Fact]
-        public async void GetSetlistReturnsSpotifyExceptionWhenSpotifyServiceResultsInAnEmptySpotifyTracksDto()
+        public void GetSetlistReturnsSpotifyExceptionWhenSpotifyServiceResultsInAnEmptySpotifyTracksDto()
         {
             var testSetlist = "{ \"id\": \"testId\", " +
                               "\"eventDate\": \"30-07-2019\", " +
@@ -73,11 +72,9 @@ namespace SpotSet.Api.Tests.Services
             
             var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
             var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
-            
+
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
-            await mockSpotifyService.SpotifyRequest(setlistDto.Result);
 
             var mockSpotSetService = new SpotSetService(mockSetlistFmService, mockSpotifyService);
 

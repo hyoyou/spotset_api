@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using System.Net;
-using Newtonsoft.Json.Linq;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
@@ -12,20 +12,18 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void SpotifyRequestReturnsASpotifyModelWhenCalledWithValidSetlistModel()
         {
-            var testSetlist = "{ \"id\": \"testId\", " +
-                              "\"eventDate\": \"30-07-2019\", " +
-                              "\"artist\": {\"name\": \"artistName\"}, " +
-                              "\"venue\": {\"name\": \"venueName\"}, " +
-                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle\"}]}]}}";
-            JObject parsedSetlist = JObject.Parse(testSetlist);
+            var newSetlist = new SetlistDto
+            {
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Tracks = new List<Song>()
+            };
 
-            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
-            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
-            
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
-            var result = await mockSpotifyService.SpotifyRequest(setlistDto.Result);
+            var result = await mockSpotifyService.SpotifyRequest(newSetlist);
 
             Assert.IsType<SpotifyTracksModel>(result);
         }
@@ -33,20 +31,22 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void SpotifyRequestReturnsSpotifyTracksModelWithCorrectNumberOfTracksWhenCalledWithASetlistModel()
         {
-            var testSetlist = "{ \"id\": \"testId\", " +
-                              "\"eventDate\": \"30-07-2019\", " +
-                              "\"artist\": {\"name\": \"artistName\"}, " +
-                              "\"venue\": {\"name\": \"venueName\"}, " +
-                              "\"sets\": {\"set\": [{\"song\": [{\"name\": \"songTitle1\"}, {\"name\": \"songTitle2\"}]}]}}";
-            JObject parsedSetlist = JObject.Parse(testSetlist);
-            
-            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
-            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
+            var newSetlist = new SetlistDto
+            {
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Tracks = new List<Song>
+                {
+                    new Song { Name = "Song Title" }, 
+                    new Song { Name = "Another Song Title" }
+                }
+            };
             
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
-            var result = await mockSpotifyService.SpotifyRequest(setlistDto.Result);
+            var result = await mockSpotifyService.SpotifyRequest(newSetlist);
             
             Assert.Equal(2, result.SpotifyTracks.Count);
         }
@@ -54,20 +54,18 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public async void SpotifyRequestReturnsEmptySpotifyTracksModelWhenCalledWithAnInvalidSetlistModel()
         {
-            var testSetlist = "{ \"id\": \"testId\", " +
-                              "\"eventDate\": \"30-07-2019\", " +
-                              "\"artist\": {\"name\": \"artistName\"}, " +
-                              "\"venue\": {\"name\": \"venueName\"}, " +
-                              "\"sets\": {\"set\": [{\"song\": []}]}}";
-            JObject parsedSetlist = JObject.Parse(testSetlist);
-            
-            var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
-            var mockSetlistFmService = new SetlistFmService(mockHttpClientFactoryForSetlistFmService);
-            var setlistDto = mockSetlistFmService.SetlistRequest("testId");
-            
+            var newSetlist = new SetlistDto
+            {
+                Id = null,
+                EventDate = null,
+                Artist = new Artist { Name = null },
+                Venue = new Venue { Name = null },
+                Tracks = new List<Song>()
+            };
+
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
-            var result = await mockSpotifyService.SpotifyRequest(setlistDto.Result);
+            var result = await mockSpotifyService.SpotifyRequest(newSetlist);
             
             Assert.Equal(0, result.SpotifyTracks.Count);
         }
