@@ -98,7 +98,6 @@ namespace SpotSet.Api.Tests.Services
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
             var result = await mockSpotifyService.SpotifyRequest(newSetlist);
 
-            Assert.IsType<SpotifyTracksModel>(result);
             Assert.Equal("Song Title", result.SpotifyTracks.First().Tracks.Items[0].Name);
             Assert.Equal("spotify:track:uri1", result.SpotifyTracks.First().Tracks.Items[0].Uri);
         }
@@ -126,7 +125,6 @@ namespace SpotSet.Api.Tests.Services
             var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
             var result = await mockSpotifyService.SpotifyRequest(newSetlist);
 
-            Assert.IsType<SpotifyTracksModel>(result);
             Assert.Equal("Song Title", result.SpotifyTracks.First().Tracks.Items[0].Name);
             Assert.Null(result.SpotifyTracks.First().Tracks.Items[0].Uri);
         }

@@ -19,12 +19,14 @@ namespace SpotSet.Api.Services
         public async Task<SpotifyTracksModel> SpotifyRequest(SetlistDto setlistModel)
         {
             var spotifyHttpClient = CreateHttpClient();
+            
             return await CreateSpotifyTracksModel(setlistModel, spotifyHttpClient);
         }
 
         private HttpClient CreateHttpClient()
         {
             var spotifyHttpClient = _httpClientFactory.CreateClient(ApiConstants.SpotifyClient);
+            
             return spotifyHttpClient;
         }
 
@@ -51,12 +53,14 @@ namespace SpotSet.Api.Services
             var url = ApiConstants.SpotifyQueryArtist + artist + ApiConstants.SpotifyQueryTrack + track.Name +
                       ApiConstants.SpotifyQueryOptions;
             var spotifyResponse = await spotifyHttpClient.GetAsync(url);
+            
             return spotifyResponse;
         }
 
         private static async Task<SpotifyTracks> DeserializeSpotifyTracks(HttpResponseMessage response)
         {
             var spotifyTracks = await response.Content.ReadAsStringAsync();
+            
             return JsonConvert.DeserializeObject<SpotifyTracks>(spotifyTracks);
         }
     }

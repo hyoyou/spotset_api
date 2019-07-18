@@ -17,6 +17,7 @@ namespace SpotSet.Api.Tests.Helpers
             var serializedSetlist = SerializeObject(content);
             var mockHttpMessageHandler = CreateMockHttpMessageHandler(statusCode, serializedSetlist);
             var mockHttpClient = new HttpClient(mockHttpMessageHandler.Object);
+            
             return new MockHttpClientFactory(mockHttpClient);
         }
 

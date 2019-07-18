@@ -34,6 +34,7 @@ namespace SpotSet.Api.Services
             }
 
             var tracksDto = MapSongToTrackUri(setlistModel.Tracks, spotifyModel.SpotifyTracks);
+            
             return CreateSpotSetDto(setlistModel, tracksDto);
         }
 
@@ -63,6 +64,7 @@ namespace SpotSet.Api.Services
                 if (isMatch(name, items)) continue;
                 {
                     var trackMatch = items.First(item => item.Name.ToLower().Contains(name.ToLower()));
+                    
                     return trackMatch?.Uri;
                 }
             }
@@ -85,6 +87,7 @@ namespace SpotSet.Api.Services
                 Venue = setlistModel.Venue.Name,
                 Tracks = tracksDto
             };
+            
             return spotSetDto;
         }
     }

@@ -27,7 +27,7 @@ namespace SpotSet.Api.Tests.Controllers
             JObject parsedSetlist = JObject.Parse(testSetlist);
 
             var testSpotifyTracks =
-                "{\"SpotifyTracks\":[{\"Tracks\":{\"Items\":[{\"Name\":\"songTitle\",\"Uri\":\"spotify:track:uri1\"}]}}]}";
+                "{\"tracks\": {\"items\": [{\"name\": \"songTitle\", \"uri\": \"spotify:track:uri1\"}]}}";
             JObject parsedSpotifyTracks = JObject.Parse(testSpotifyTracks);
             
             var mockHttpClientFactoryForSetlistFmService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSetlist);
