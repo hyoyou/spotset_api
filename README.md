@@ -56,7 +56,7 @@
    
 * Clone this repo and `cd` into the project directory
 * To save these variables to your environment:
-    * Navigate to the project directory (the one housing the .csproj file) in your terminal (ie. If you're inside the root level `SpotSet.Api` directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
+    * Navigate to the project directory (the one housing the .csproj file) in your terminal (ie. If you're inside the root level `SpotSet.Api` solution directory containing the `SpotSet.Api` and `SpotSet.Api.Tests` directory, `cd` once more into the `SpotSet.Api` project directory), then run these commands to save each variable:
     
    ```
    $ dotnet user-secrets set "SetlistApiKey" "<Your setlist.fm API Key>"
@@ -67,6 +67,8 @@
    * You could check that the keys have been saved properly by running `dotnet user-secrets list`
    
 ## Setup
+* Switch directory with `cd ..` back into the solution directory
+
 * To start the app:
 
 ```
