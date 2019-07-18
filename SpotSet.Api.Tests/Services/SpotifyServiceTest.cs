@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using Newtonsoft.Json.Linq;
 using SpotSet.Api.Models;
 using SpotSet.Api.Services;
 using SpotSet.Api.Tests.Helpers;
@@ -18,7 +20,10 @@ namespace SpotSet.Api.Tests.Services
                 EventDate = "01-07-2019",
                 Artist = new Artist { Name = "Artist" },
                 Venue = new Venue { Name = "Venue" },
-                Tracks = new List<Song>()
+                Tracks = new List<Song>
+                {
+                    new Song { Name = "Song Title" }
+                }
             };
 
             var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK);
@@ -68,6 +73,60 @@ namespace SpotSet.Api.Tests.Services
             var result = await mockSpotifyService.SpotifyRequest(newSetlist);
             
             Assert.Equal(0, result.SpotifyTracks.Count);
+        }
+        
+        [Fact]
+        public async void SpotifyRequestReturnsASpotifyTracksModelWithTrackInformationWhenCalledWithValidSetlistModel()
+        {
+            var newSetlist = new SetlistDto
+            {
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Tracks = new List<Song>
+                {
+                    new Song { Name = "Song Title" }
+                }
+            };
+
+            var testSpotifyTracks =
+                "{\"tracks\": {\"items\": [{\"name\": \"Song Title\", \"uri\": \"spotify:track:uri1\"}]}}";
+            JObject parsedSpotifyTracks = JObject.Parse(testSpotifyTracks);
+            
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSpotifyTracks);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            var result = await mockSpotifyService.SpotifyRequest(newSetlist);
+
+            Assert.Equal("Song Title", result.SpotifyTracks.First().Tracks.Items[0].Name);
+            Assert.Equal("spotify:track:uri1", result.SpotifyTracks.First().Tracks.Items[0].Uri);
+        }
+        
+        [Fact]
+        public async void SpotifyRequestReturnsASpotifyTracksModelWithMissingTrackInformationWhenCalledWithValidSetlistModel()
+        {
+            var newSetlist = new SetlistDto
+            {
+                Id = "setlistId",
+                EventDate = "01-07-2019",
+                Artist = new Artist { Name = "Artist" },
+                Venue = new Venue { Name = "Venue" },
+                Tracks = new List<Song>
+                {
+                    new Song { Name = "Song Title" }
+                }
+            };
+
+            var testSpotifyTracks =
+                "{\"tracks\": {\"items\": [{\"name\": \"Song Title\"}]}}";
+            JObject parsedSpotifyTracks = JObject.Parse(testSpotifyTracks);
+            
+            var mockHttpClientFactoryforSpotifyService = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.OK, parsedSpotifyTracks);
+            var mockSpotifyService = new SpotifyService(mockHttpClientFactoryforSpotifyService);
+            var result = await mockSpotifyService.SpotifyRequest(newSetlist);
+
+            Assert.Equal("Song Title", result.SpotifyTracks.First().Tracks.Items[0].Name);
+            Assert.Null(result.SpotifyTracks.First().Tracks.Items[0].Uri);
         }
     }
 }

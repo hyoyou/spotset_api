@@ -34,6 +34,7 @@ namespace SpotSet.Api.Services
         private HttpClient CreateHttpClient()
         {
             var httpClient = _httpClientFactory.CreateClient(ApiConstants.SetlistClient);
+            
             return httpClient;
         }
 
@@ -41,18 +42,21 @@ namespace SpotSet.Api.Services
         {
             var uri = ApiConstants.SetlistSearchUri + setlistId;
             HttpResponseMessage response = await httpClient.GetAsync(uri);
+            
             return response;
         }
 
         private static async Task<SetlistDto> DeserializeSetlist(HttpResponseMessage response)
         {
             var setlist = await response.Content.ReadAsStringAsync();
+            
             return JsonConvert.DeserializeObject<SetlistDto>(setlist);
         }
         
         private static SetlistDto AddTracksField(SetlistDto setlist)
         {
             setlist.Tracks = setlist.Sets.Set.SelectMany(s => s.Song).ToList();
+            
             return setlist;
         }
     }

@@ -39,6 +39,7 @@ namespace SpotSet.Api.Services
         {
             var authClient = CreateRequest(out var requestBody);
             var request = await SendRequest(authClient, requestBody);
+            
             return await ProcessResponse(request);
         }
 
@@ -76,12 +77,14 @@ namespace SpotSet.Api.Services
         private static async Task<HttpResponseMessage> SendRequest(HttpClient authClient, FormUrlEncodedContent requestBody)
         {
             var request = await authClient.PostAsync(ApiConstants.SpotifyAuthUri, requestBody);
+            
             return request;
         }
 
         private static async Task<SpotifyAccessToken> ProcessResponse(HttpResponseMessage request)
         {
             var response = await request.Content.ReadAsStringAsync();
+            
             return JsonConvert.DeserializeObject<SpotifyAccessToken>(response);
         }
     }
