@@ -42,7 +42,7 @@ namespace SpotSet.Api.Tests.Services
         [Fact]
         public void HttpClientIsReturnedWithTheCorrectHeaders()
         {
-            var content = JsonConvert.SerializeObject("sample");
+            var content = JsonConvert.SerializeObject("test");
             var mockHttpMessageHandler = TestSetup.CreateMockHttpMessageHandler(HttpStatusCode.OK, content);
             var mockHttpClientFactory = TestSetup.CreateMockHttpClientFactory(HttpStatusCode.NotFound);
             var mockConfiguration = new MockConfiguration();
