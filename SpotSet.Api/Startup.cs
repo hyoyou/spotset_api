@@ -33,7 +33,7 @@ namespace SpotSet.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            _setlistApiKey = Configuration["SetlistApiKey"];
+            _setlistApiKey = Configuration[ApiConstants.SetlistApiKey];
 
             services.RegisterServices();
             services.AddTransient<AppAuthorizationHandler>();

@@ -88,7 +88,7 @@ namespace SpotSet.Api.Services
 
         private static SpotSetDto CreateSpotSetDto(SetlistDto setlistModel, List<TracksDto> tracksDto)
         {
-            var setlistDto = new SpotSetDto
+            var spotSetDto = new SpotSetDto
             {
                 Id = setlistModel.Id,
                 EventDate = setlistModel.EventDate,
@@ -96,7 +96,7 @@ namespace SpotSet.Api.Services
                 Venue = setlistModel.Venue.Name,
                 Tracks = tracksDto
             };
-            return setlistDto;
+            return spotSetDto;
         }
     }
 }

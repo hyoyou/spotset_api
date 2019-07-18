@@ -5,6 +5,7 @@ namespace SpotSet.Api.Constants
         public const string SetlistClient = "GetSetlistClient";
         public const string SpotifyClient = "GetSpotifyClient";
 
+        public const string SetlistApiKey = "SetlistApiKey";
         public const string SpotifyApiKey = "SpotifyApiKey";
         public const string SpotifyApiSecret = "SpotifyApiSecret";
         
