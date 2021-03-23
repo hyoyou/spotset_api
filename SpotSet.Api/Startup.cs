@@ -50,6 +50,7 @@ namespace SpotSet.Api
                         builder.WithOrigins(ApiConstants.ClientUrlLocal);
                     });
             });
+            services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
